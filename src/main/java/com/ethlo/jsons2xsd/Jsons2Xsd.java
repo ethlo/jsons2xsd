@@ -1,7 +1,5 @@
 package com.ethlo.jsons2xsd;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -38,15 +36,27 @@ public class Jsons2Xsd
 	private static final Map<String, String> typeMapping = new HashMap<>();
 	static
 	{
-		typeMapping.put("string|date-time", "dateTime");
-		typeMapping.put("string|date", "date");
+		// Primitive types
 		typeMapping.put("string", "string");
 		typeMapping.put("object", "object");
 		typeMapping.put("array", "array");
 		typeMapping.put("number", "decimal");
+		typeMapping.put("boolean", "boolean");
+		typeMapping.put("integer", "int");
+		
+		// TODO: Support "JSON null" 
+		
+		// String formats
 		typeMapping.put("string|uri", "anyURI");
 		typeMapping.put("string|email", "string");
 		typeMapping.put("string|phone", "string");
+		typeMapping.put("string|date-time", "dateTime");
+		typeMapping.put("string|date", "date");
+		typeMapping.put("string|time", "time");
+		typeMapping.put("string|utc-millisec", "long");
+		typeMapping.put("string|regex", "string");
+		typeMapping.put("string|color", "string");
+		typeMapping.put("string|style", "string");
 	}
 	
 	public static Document convert(Reader jsonSchema, String targetNameSpaceUri) throws JsonProcessingException, IOException
@@ -132,8 +142,16 @@ public class Jsons2Xsd
 			final Element arrElem = createElement(sequence, "element");
 			arrElem.setAttribute("name", "item");
 			arrElem.setAttribute("type", arrayXsdType);
-			arrElem.setAttribute("minOccurs", "0");
-			arrElem.setAttribute("maxOccurs", "unbounded");
+			
+			// TODO: Set restrictions for the array type, and possibly recurse into the type if "object"
+			
+			// Minimum items
+			final Integer minItems = val.get("minItems") != null ? val.get("minItems").intValue() : null;
+			arrElem.setAttribute("minOccurs", minItems != null ? Integer.toString(minItems) : "0");
+
+			// Max Items
+			final Integer maxItems = val.get("maxItems") != null ? val.get("maxItems").intValue() : null;
+			arrElem.setAttribute("maxOccurs", maxItems != null ? Integer.toString(maxItems) : "unbounded");
 		}
 		else if ("object".equals(xsdType))
 		{
@@ -146,14 +164,68 @@ public class Jsons2Xsd
 			final JsonNode properties = val.get("properties");
 			doIterate(sequence, properties);
 		}
-		else
+		else if ("decimal".equals(xsdType) || "int".equals(xsdType))
 		{
-			final JsonNode properties = val.get("properties");
-			if (properties != null)
+			final Integer minimum = getIntVal(val, "minimum");
+			final Integer maximum = getIntVal(val, "maximum");
+			
+			if (minimum != null || maximum != null)
 			{
-				doIterate(newElem, properties);
+				newElem.removeAttribute("type");
+				final Element simpleType = createElement(newElem, "simpleType");
+				final Element restriction = createElement(simpleType, "restriction");
+				restriction.setAttribute("base", xsdType);
+				
+				if (minimum != null)
+				{
+					final Element min = createElement(restriction, "minInclusive");
+					min.setAttribute("value", Integer.toString(minimum));
+				}
+				
+				if (maximum != null)
+				{
+					final Element max = createElement(restriction, "maxInclusive");
+					max.setAttribute("value", Integer.toString(maximum));
+				}
 			}
 		}
+		else if ("string".equals(xsdType))
+		{
+			final Integer minimumLength = getIntVal(val, "minLength");
+			final Integer maximumLength = getIntVal(val, "maxLength");
+			final String expression = val.path("pattern").textValue();
+			
+			if (minimumLength  != null || maximumLength != null || expression != null)
+			{
+				newElem.removeAttribute("type");
+				final Element simpleType = createElement(newElem, "simpleType");
+				final Element restriction = createElement(simpleType, "restriction");
+				restriction.setAttribute("base", xsdType);
+				
+				if (minimumLength != null)
+				{
+					final Element min = createElement(restriction, "minLength");
+					min.setAttribute("value", Integer.toString(minimumLength));
+				}
+				
+				if (maximumLength != null)
+				{
+					final Element max = createElement(restriction, "maxLength");
+					max.setAttribute("value", Integer.toString(maximumLength));
+				}
+				
+				if (expression != null)
+				{
+					final Element max = createElement(restriction, "pattern");
+					max.setAttribute("value", expression);
+				}
+			}
+		}
+	}
+
+	private static Integer getIntVal(JsonNode node, String attribute)
+	{
+		return node.get(attribute) != null ? node.get(attribute).intValue() : null;
 	}
 
 	private static Element createElement(Node element, String name)
