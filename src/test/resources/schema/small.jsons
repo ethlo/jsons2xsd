@@ -1,0 +1,47 @@
+{
+    "title":"Manufacturing",
+    "type":"object",
+    "id":"schemanode",
+    "description":"Manufacturing order metadata description",
+    "required":true,
+    "properties":
+    {
+        "batchId":
+        {
+            "type":"string",
+            "required": false,
+            "title":"Batch ID",
+            "description":"Batch ID"
+        },
+        "factoryId":
+        {
+            "type":"string",
+            "title":"Factory ID",
+            "description":"Factory ID"
+        },
+        "lineId":
+        {
+            "type":"string",
+            "title":"Line ID",
+            "description":"Line ID"
+        },
+        "productionStartDate":
+        {
+            "type":"date-time",
+            "title":"Production start date",
+            "description":"Production start date"
+        },
+        "productionEndDate":
+        {
+            "type":"date-time",
+            "title":"Production end date",
+            "description":"Production start date"
+        },
+        "gtin":
+        {
+            "type":"string",
+            "title":"GTIN",
+            "description":"GTIN"
+        }
+    }
+}

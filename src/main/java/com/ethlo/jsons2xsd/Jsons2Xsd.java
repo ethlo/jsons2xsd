@@ -2,24 +2,12 @@ package com.ethlo.jsons2xsd;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class Jsons2Xsd
 {
 	private final static ObjectMapper mapper = new ObjectMapper();
+	
+	public static enum OuterWrapping
+	{
+		ELEMENT, TYPE;
+	}
 	
 	private static final Map<String, String> typeMapping = new HashMap<>();
 	static
@@ -46,6 +39,10 @@ public class Jsons2Xsd
 		
 		// TODO: Support "JSON null" 
 		
+		typeMapping.put("date-time", "dateTime");
+		typeMapping.put("time", "time");
+		typeMapping.put("date", "date");
+		
 		// String formats
 		typeMapping.put("string|uri", "anyURI");
 		typeMapping.put("string|email", "string");
@@ -59,7 +56,7 @@ public class Jsons2Xsd
 		typeMapping.put("string|style", "string");
 	}
 	
-	public static Document convert(Reader jsonSchema, String targetNameSpaceUri) throws JsonProcessingException, IOException
+	public static Document convert(Reader jsonSchema, String targetNameSpaceUri, OuterWrapping wrapping, String name) throws JsonProcessingException, IOException
 	{
 		JsonNode rootNode = mapper.readTree(jsonSchema);
 		final String type = rootNode.path("type").textValue();
@@ -68,33 +65,33 @@ public class Jsons2Xsd
 		final JsonNode properties = rootNode.get("properties");
 		assertNotNull(properties, "\"properties\" property should be found in root of JSON schema\"");
 		
-		final Document xsdDoc = newDocument();
-		final Element schemaRoot = createElement(xsdDoc, "schema");
+		final Document xsdDoc = XmlUtil.newDocument();
+		xsdDoc.setXmlStandalone(true);
+		
+		final Element schemaRoot = createXsdElement(xsdDoc, "schema");
 		schemaRoot.setAttribute("targetNamespace", targetNameSpaceUri);
-		final Element schemaElement = createElement(schemaRoot, "element");
-		schemaElement.setAttribute("name", "schemaname");
-		final Element schemaComplexType = createElement(schemaElement, "complexType");
-		final Element schemaSequence = createElement(schemaComplexType, "sequence");
+		schemaRoot.setAttribute("xmlns:xs", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		schemaRoot.setAttribute("elementFormDefault", "qualified");
+		schemaRoot.setAttribute("attributeFormDefault", "qualified");
+		
+		Element wrapper = schemaRoot;
+		if (wrapping == OuterWrapping.ELEMENT)
+		{
+			wrapper = createXsdElement(schemaRoot, "element");
+			wrapper.setAttribute("name", name);
+		}
+		
+		final Element schemaComplexType = createXsdElement(wrapper, "complexType");
+		
+		if (wrapping == OuterWrapping.TYPE)
+		{
+			schemaComplexType.setAttribute("name", name);
+		}
+		final Element schemaSequence = createXsdElement(schemaComplexType, "sequence");
 		
 		doIterate(schemaSequence, properties);
 		
 		return xsdDoc;
-	}
-	
-	private static Document newDocument()
-	{
-		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		try
-		{
-			final DocumentBuilder builder = factory.newDocumentBuilder();
-			return builder.newDocument();
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new RuntimeException(e);
-		}
-		
 	}
 
 	private static void doIterate(Element elem, JsonNode node)
@@ -111,115 +108,170 @@ public class Jsons2Xsd
 	
 	private static void doIterateSingle(String key, JsonNode val, Element elem)
 	{
-		final String jsonType = val.path("type").textValue();
-		assertNotNull(jsonType, "type must be specified on node '" + key + "': " + val);
-		final String xsdType = getType(jsonType, val.path("format").textValue());
+		final String xsdType = determineXsdType(key, val);
 		final boolean required = val.path("required").booleanValue();
-
-		final Element newElem = createElement(elem, "element");
-		newElem.setAttribute("name", key);
-		if (! required)
-		{
-			newElem.setAttribute("minOccurs", "0");
-		}
+		final Element nodeElem = createXsdElement(elem, "element");
+		nodeElem.setAttribute("name", key);
 		
 		if (! "object".equals(xsdType) && !"array".equals(xsdType))
 		{
-			newElem.setAttribute("type", xsdType);
+			// Simple type
+			nodeElem.setAttribute("type", xsdType);
 		}
 		
-		if ("array".equals(xsdType))
+		if (! required)
 		{
-			final JsonNode arrItems = val.path("items");
-			final String arrayXsdType = getType(arrItems.path("type").textValue(), arrItems.path("format").textValue());
-			final boolean arrRequired = arrItems.path("required").booleanValue();
-			if (! arrRequired)
-			{
-				newElem.setAttribute("minOccurs", "0");
-			}
-			final Element complexType = createElement(newElem, "complexType");
-			final Element sequence = createElement(complexType, "sequence");
-			final Element arrElem = createElement(sequence, "element");
-			arrElem.setAttribute("name", "item");
-			arrElem.setAttribute("type", arrayXsdType);
-			
-			// TODO: Set restrictions for the array type, and possibly recurse into the type if "object"
-			
-			// Minimum items
-			final Integer minItems = val.get("minItems") != null ? val.get("minItems").intValue() : null;
-			arrElem.setAttribute("minOccurs", minItems != null ? Integer.toString(minItems) : "0");
+			// Not required
+			nodeElem.setAttribute("minOccurs", "0");
+		}
+		
+		switch (xsdType)
+		{
+			case "array":
+				handleArray(nodeElem, val);
+				return;
+				
+			case "decimal":
+			case "int":
+				handleNumber(nodeElem, xsdType, val);
+				return;
+				
+			case "enum":
+				handleEnum(nodeElem, val);
+				return;
+				
+			case "object":
+				handleObject(nodeElem, val);
+				return;
+				
+			case "string":
+				handleString(nodeElem, val);
+				return;
+		}
+	}
 
-			// Max Items
-			final Integer maxItems = val.get("maxItems") != null ? val.get("maxItems").intValue() : null;
-			arrElem.setAttribute("maxOccurs", maxItems != null ? Integer.toString(maxItems) : "unbounded");
-		}
-		else if ("object".equals(xsdType))
+	private static void handleString(Element nodeElem, JsonNode val)
+	{
+		final Integer minimumLength = getIntVal(val, "minLength");
+		final Integer maximumLength = getIntVal(val, "maxLength");
+		final String expression = val.path("pattern").textValue();
+		
+		if (minimumLength != null || maximumLength != null || expression != null)
 		{
-			if (! required)
-			{
-				newElem.setAttribute("minOccurs", "0");
-			}
-			final Element complexType = createElement(newElem, "complexType");
-			final Element sequence = createElement(complexType, "sequence");
-			final JsonNode properties = val.get("properties");
-			doIterate(sequence, properties);
-		}
-		else if ("decimal".equals(xsdType) || "int".equals(xsdType))
-		{
-			final Integer minimum = getIntVal(val, "minimum");
-			final Integer maximum = getIntVal(val, "maximum");
+			nodeElem.removeAttribute("type");
+			final Element simpleType = createXsdElement(nodeElem, "simpleType");
+			final Element restriction = createXsdElement(simpleType, "restriction");
+			restriction.setAttribute("base", "string");
 			
-			if (minimum != null || maximum != null)
+			if (minimumLength != null)
 			{
-				newElem.removeAttribute("type");
-				final Element simpleType = createElement(newElem, "simpleType");
-				final Element restriction = createElement(simpleType, "restriction");
-				restriction.setAttribute("base", xsdType);
-				
-				if (minimum != null)
-				{
-					final Element min = createElement(restriction, "minInclusive");
-					min.setAttribute("value", Integer.toString(minimum));
-				}
-				
-				if (maximum != null)
-				{
-					final Element max = createElement(restriction, "maxInclusive");
-					max.setAttribute("value", Integer.toString(maximum));
-				}
+				final Element min = createXsdElement(restriction, "minLength");
+				min.setAttribute("value", Integer.toString(minimumLength));
+			}
+			
+			if (maximumLength != null)
+			{
+				final Element max = createXsdElement(restriction, "maxLength");
+				max.setAttribute("value", Integer.toString(maximumLength));
+			}
+			
+			if (expression != null)
+			{
+				final Element max = createXsdElement(restriction, "pattern");
+				max.setAttribute("value", expression);
 			}
 		}
-		else if ("string".equals(xsdType))
+	}
+
+	private static void handleObject(Element nodeElem, JsonNode val)
+	{
+		final Element complexType = createXsdElement(nodeElem, "complexType");
+		final Element sequence = createXsdElement(complexType, "sequence");
+		final JsonNode properties = val.get("properties");
+		assertNotNull(properties, "'object' type must have a 'properties' attribute");
+		doIterate(sequence, properties);
+	}
+
+	private static void handleEnum(Element nodeElem, JsonNode val)
+	{
+		nodeElem.removeAttribute("type");
+		final Element simpleType = createXsdElement(nodeElem, "simpleType");
+		final Element restriction = createXsdElement(simpleType, "restriction");
+		restriction.setAttribute("base", "string");
+		final JsonNode enumNode = val.get("enum");
+		for (int i = 0; i < enumNode.size(); i++)
 		{
-			final Integer minimumLength = getIntVal(val, "minLength");
-			final Integer maximumLength = getIntVal(val, "maxLength");
-			final String expression = val.path("pattern").textValue();
+		    final String enumVal = enumNode.path(i).asText();
+		    final Element enumElem = createXsdElement(restriction, "enumeration");
+		    enumElem.setAttribute("value", enumVal);
+		}
+	}
+
+	private static void handleNumber(Element nodeElem, String xsdType, JsonNode jsonNode)
+	{
+		final Integer minimum = getIntVal(jsonNode, "minimum");
+		final Integer maximum = getIntVal(jsonNode, "maximum");
+		
+		if (minimum != null || maximum != null)
+		{
+			nodeElem.removeAttribute("type");
+			final Element simpleType = createXsdElement(nodeElem, "simpleType");
+			final Element restriction = createXsdElement(simpleType, "restriction");
+			restriction.setAttribute("base", xsdType);
 			
-			if (minimumLength  != null || maximumLength != null || expression != null)
+			if (minimum != null)
 			{
-				newElem.removeAttribute("type");
-				final Element simpleType = createElement(newElem, "simpleType");
-				final Element restriction = createElement(simpleType, "restriction");
-				restriction.setAttribute("base", xsdType);
-				
-				if (minimumLength != null)
-				{
-					final Element min = createElement(restriction, "minLength");
-					min.setAttribute("value", Integer.toString(minimumLength));
-				}
-				
-				if (maximumLength != null)
-				{
-					final Element max = createElement(restriction, "maxLength");
-					max.setAttribute("value", Integer.toString(maximumLength));
-				}
-				
-				if (expression != null)
-				{
-					final Element max = createElement(restriction, "pattern");
-					max.setAttribute("value", expression);
-				}
+				final Element min = createXsdElement(restriction, "minInclusive");
+				min.setAttribute("value", Integer.toString(minimum));
 			}
+			
+			if (maximum != null)
+			{
+				final Element max = createXsdElement(restriction, "maxInclusive");
+				max.setAttribute("value", Integer.toString(maximum));
+			}
+		}
+	}
+
+	private static void handleArray(Element nodeElem, JsonNode jsonNode)
+	{
+		final JsonNode arrItems = jsonNode.path("items");
+		final String arrayXsdType = getType(arrItems.path("type").textValue(), arrItems.path("format").textValue());
+		final boolean arrRequired = arrItems.path("required").booleanValue();
+		if (! arrRequired)
+		{
+			nodeElem.setAttribute("minOccurs", "0");
+		}
+		final Element complexType = createXsdElement(nodeElem, "complexType");
+		final Element sequence = createXsdElement(complexType, "sequence");
+		final Element arrElem = createXsdElement(sequence, "element");
+		arrElem.setAttribute("name", "item");
+		arrElem.setAttribute("type", arrayXsdType);
+		
+		// TODO: Set restrictions for the array type, and possibly recurse into the type if "object"
+		
+		// Minimum items
+		final Integer minItems = getIntVal(jsonNode, "minItems");
+		arrElem.setAttribute("minOccurs", minItems != null ? Integer.toString(minItems) : "0");
+
+		// Max Items
+		final Integer maxItems = getIntVal(jsonNode, "maxItems");
+		arrElem.setAttribute("maxOccurs", maxItems != null ? Integer.toString(maxItems) : "unbounded");
+
+	}
+
+	private static String determineXsdType(String key, JsonNode node)
+	{
+		String jsonType = node.path("type").textValue();
+		final boolean isEnum = node.get("enum") != null;
+		if (! isEnum)
+		{
+			assertNotNull(jsonType, "type must be specified on node '" + key + "': " + node);
+			return getType(jsonType, node.path("format").textValue());
+		}
+		else
+		{
+			return "enum";
 		}
 	}
 
@@ -228,13 +280,9 @@ public class Jsons2Xsd
 		return node.get(attribute) != null ? node.get(attribute).intValue() : null;
 	}
 
-	private static Element createElement(Node element, String name)
+	private static Element createXsdElement(Node element, String name)
 	{
-		assertNotNull(element, "element should never be null");
-		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
-		final Element retVal = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
-		element.appendChild(retVal);
-		return retVal;
+		return XmlUtil.createXsdElement(element, name);
 	}
 
 	private static void assertTrue(boolean expression, String message)
@@ -258,18 +306,5 @@ public class Jsons2Xsd
 		final String key = (type + (format != null ? ("|" + format) : "")).toLowerCase();
 		final String retVal = typeMapping.get(key);
 		return retVal;
-	}
-	
-	public static String asXmlString(Node node) throws TransformerException 
-	{
-	    final Source source = new DOMSource(node);
-        final StringWriter stringWriter = new StringWriter();
-        final Result result = new StreamResult(stringWriter);
-        final TransformerFactory factory = TransformerFactory.newInstance();
-        final Transformer transformer = factory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        transformer.transform(source, result);
-        return stringWriter.getBuffer().toString();
 	}
 }

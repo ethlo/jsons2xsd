@@ -16,6 +16,7 @@
         "age": { "type": "integer", "required":true, "minimum":18 },
         "ssn": { "type": "string", "required":false, "pattern":"[0-9]{3}-[0-9]{2}-[0-9]{4}", "minLength":5},
         "url": { "type": "string", "format": "uri" },
+        "preferred_format": {"enum":["plaintext", "html", "pdf", 123], "default":"plaintext"},
         "email": {
             "type": "object",
             "properties": {

@@ -1,0 +1,13 @@
+<ex:UpdateDataRequest xmlns:ex="http://example.com/ns1" xmlns:for="http://example.com/foreign-1.0.xsd">
+   <ex:id>12345</ex:id>
+   <ex:payload>
+      <!--Optional:-->
+      <for:batchId>?</for:batchId>
+      <!--Optional:-->
+      <for:factoryId>?</for:factoryId>
+      <!--Optional:-->
+      <for:lineId>?</for:lineId>
+      <!--Optional:-->
+      <for:gtin>?</for:gtin>
+   </ex:payload>
+</ex:UpdateDataRequest>
