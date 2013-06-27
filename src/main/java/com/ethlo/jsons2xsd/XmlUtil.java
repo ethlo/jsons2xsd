@@ -115,6 +115,24 @@ public class XmlUtil
 		element.appendChild(retVal);
 		return retVal;
 	}
+	
+	public static Element prependXsdElement(Node element, String name)
+	{
+		Assert.notNull(element, "element should never be null");
+		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
+		final Element retVal = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
+		final Node first = element.getFirstChild();
+		if (first != null)
+		{
+			element.insertBefore(retVal, first);
+		}
+		else
+		{
+			element.appendChild(retVal);
+		}
+		return retVal;
+	}
+	
 }
 
 

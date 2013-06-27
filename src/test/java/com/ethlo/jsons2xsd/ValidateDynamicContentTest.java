@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URI;
 
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Validator;
@@ -24,9 +25,8 @@ public class ValidateDynamicContentTest
 	public void buildWsdlWithDynamicType() throws Exception
 	{
 		final Validator validator = new DynamicWsdlBuilder()
-			.withWrapper(new ClassPathResource("/schema/dynRequest.xsd"))
+			.withWrapper(URI.create("classpath:/schema/dynRequest.xsd"))
 			.withTargetNameSpace("http://example.com/foreign-1.0.xsd")
-			.withTargetTypeName("PayloadType")
 			.withDynamicSchema(new SchemaGenerator()
 			{
 				@Override

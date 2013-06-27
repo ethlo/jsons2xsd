@@ -3,6 +3,8 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"  
 	xmlns:foreign="http://example.com/foreign-1.0.xsd"
 	elementFormDefault="qualified">
+	
+	<xs:import schemaLocation="foo.xsd" namespace="http://foo.com/foo" />
 
 	<xs:import id="dynamicTypeImport" />
 
