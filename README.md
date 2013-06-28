@@ -1,11 +1,14 @@
 Jsons2xsd
 =========
-Json schema to XML schema (XSD) converter.
+Json schema (http://json-schema.org/) to XML schema (XSD) converter.
 
 # Features
 * Single purpose library
 * Fast
 * Minimal dependencies
+
+# Features supported
+TBD
 
 Feedback and pull requests greatly appreciated.
 
