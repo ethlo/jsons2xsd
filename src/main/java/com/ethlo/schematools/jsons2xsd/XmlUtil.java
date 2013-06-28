@@ -1,4 +1,4 @@
-package com.ethlo.jsons2xsd;
+package com.ethlo.schematools.jsons2xsd;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,7 +17,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

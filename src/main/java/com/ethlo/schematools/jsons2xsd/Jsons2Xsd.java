@@ -1,4 +1,4 @@
-package com.ethlo.jsons2xsd;
+package com.ethlo.schematools.jsons2xsd;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -60,10 +60,10 @@ public class Jsons2Xsd
 	{
 		JsonNode rootNode = mapper.readTree(jsonSchema);
 		final String type = rootNode.path("type").textValue();
-		assertTrue("object".equals(type), "root should have type=\"object\"");
+		Assert.isTrue("object".equals(type), "root should have type=\"object\"");
 		
 		final JsonNode properties = rootNode.get("properties");
-		assertNotNull(properties, "\"properties\" property should be found in root of JSON schema\"");
+		Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
 		
 		final Document xsdDoc = XmlUtil.newDocument();
 		xsdDoc.setXmlStandalone(true);
@@ -188,7 +188,7 @@ public class Jsons2Xsd
 		final Element complexType = createXsdElement(nodeElem, "complexType");
 		final Element sequence = createXsdElement(complexType, "sequence");
 		final JsonNode properties = val.get("properties");
-		assertNotNull(properties, "'object' type must have a 'properties' attribute");
+		Assert.notNull(properties, "'object' type must have a 'properties' attribute");
 		doIterate(sequence, properties);
 	}
 
@@ -266,7 +266,7 @@ public class Jsons2Xsd
 		final boolean isEnum = node.get("enum") != null;
 		if (! isEnum)
 		{
-			assertNotNull(jsonType, "type must be specified on node '" + key + "': " + node);
+			Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
 			return getType(jsonType, node.path("format").textValue());
 		}
 		else
@@ -283,22 +283,6 @@ public class Jsons2Xsd
 	private static Element createXsdElement(Node element, String name)
 	{
 		return XmlUtil.createXsdElement(element, name);
-	}
-
-	private static void assertTrue(boolean expression, String message)
-	{
-		if (! expression)
-		{
-			throw new IllegalArgumentException(message);
-		}
-	}
-	
-	private static void assertNotNull(Object obj, String message)
-	{
-		if (obj == null)
-		{
-			throw new IllegalArgumentException(message);
-		}
 	}
 
 	private static String getType(String type, String format)

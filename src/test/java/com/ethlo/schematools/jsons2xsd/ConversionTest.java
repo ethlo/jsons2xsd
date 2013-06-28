@@ -1,4 +1,4 @@
-package com.ethlo.jsons2xsd;
+package com.ethlo.schematools.jsons2xsd;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +9,9 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.ethlo.jsons2xsd.Jsons2Xsd.OuterWrapping;
+import com.ethlo.schematools.jsons2xsd.Jsons2Xsd;
+import com.ethlo.schematools.jsons2xsd.XmlUtil;
+import com.ethlo.schematools.jsons2xsd.Jsons2Xsd.OuterWrapping;
 
 /**
  * 
