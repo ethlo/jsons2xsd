@@ -29,7 +29,7 @@ public class ConversionTest
 			System.out.println(XmlUtil.asXmlString(doc.getDocumentElement()));
 		}
 	}
-	
+
 	@Test
 	public void testConversionMedium() throws IOException, TransformerException
 	{
@@ -37,6 +37,20 @@ public class ConversionTest
 		{
 			final Document doc = Jsons2Xsd.convert(r, "http://ethlo.com/schema/contacts-1.0.xsd", OuterWrapping.TYPE, "mySpecialType");
 			System.out.println(XmlUtil.asXmlString(doc.getDocumentElement()));
+		}
+	}
+	
+	@Test
+	public void testConversionAbcd() throws IOException, TransformerException
+	{
+		System.out.println(XmlUtil.asXmlString(doConvert("/schema/abcd.json")));
+	}
+
+	private Document doConvert(String file) throws IOException
+	{
+		try (final Reader r = new InputStreamReader(getClass().getResourceAsStream(file)))
+		{
+			return Jsons2Xsd.convert(r, "http://ethlo.com/schema/contacts-1.0.xsd", OuterWrapping.TYPE, "mySpecialType");
 		}
 	}
 }

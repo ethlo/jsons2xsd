@@ -37,11 +37,13 @@ public class Jsons2Xsd
 		typeMapping.put("boolean", "boolean");
 		typeMapping.put("integer", "int");
 		
-		// TODO: Support "JSON null" 
-		
+		// Non-standard, often encountered in the wild
+		typeMapping.put("int", "int");
 		typeMapping.put("date-time", "dateTime");
 		typeMapping.put("time", "time");
 		typeMapping.put("date", "date");
+		
+		// TODO: Support "JSON null" 
 		
 		// String formats
 		typeMapping.put("string|uri", "anyURI");
@@ -263,11 +265,14 @@ public class Jsons2Xsd
 	private static String determineXsdType(String key, JsonNode node)
 	{
 		String jsonType = node.path("type").textValue();
+		final String jsonFormat = node.path("format").textValue();
 		final boolean isEnum = node.get("enum") != null;
 		if (! isEnum)
 		{
 			Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
-			return getType(jsonType, node.path("format").textValue());
+			final String xsdType = getType(jsonType, jsonFormat);
+			Assert.notNull(xsdType, "Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+			return xsdType;
 		}
 		else
 		{
