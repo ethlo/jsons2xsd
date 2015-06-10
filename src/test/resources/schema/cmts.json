@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "CMTS",
+  "type": "object",
+  "properties": {
+    "id": {"type": "string"},
+    "link": {
+      "type": "object",
+      "$ref": "#/definitions/Link"
+    },
+    "commonName": {"type": "string"},
+    "deviceActivationStatus": {
+      "type": "string",
+      "description": "Activation_Pending, Activated, Activation_Failed",
+      "enum": [
+        "Activation_Pending",
+        "Activated",
+        "Activation_Failed"
+      ]
+    },
+    "backplaneIndependent": {"type": "boolean"},
+    "backplaneNumber": {"type": "integer"},
+    "configurationOrder": {"type": "string"},
+    "deviceGroupID": {"type": "string"},
+    "isComposite": {"type": "boolean"},
+    "canMixPower": {"type": "boolean"},
+    "hasPowerManagement": {"type": "boolean"},
+    "powerManagementCapabilities": {"type": "string"},
+    "deviceProviderType": {"type": "string"},
+    "deviceManagementType": {"type": "string"},
+    "manufactureDate": {"type": "string"},
+    "manufactureDateStamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "otherIdentifier": {"type": "string"},
+    "powerState": {
+      "type": "integer",
+      "description": "0: Unknown, 1: Not Applicable, 2: No Power Applied, 3: Full Power Applied, 4: Power Save - Normal, 5: Power Save - Degraded, 6: Power Save - Standby, 7: Power Save - Critical, 8: Power Save - Low Power Mode, 9: Power Save - Unknown, 10: Power Cycle, 11: Power Warning, 12: Power Off"
+    },
+    "serialNumber": {"type": "string"},
+    "versionNumber": {"type": "string"},
+    "usageState": {"type": "integer"},
+    "clliCode": {"type": "string"},
+    "assignedCableModems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "#/definitions/CMTSCableModemAssignment"
+      }
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "#/definitions/CableModemChannel"
+      }
+    },
+    "ipAddressSummary": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/IpAddress"}
+    }
+  }
+}

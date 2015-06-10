@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,6 +77,26 @@ public class XmlUtil
 	}
 
 	public static Element createXsdElement(Node element, String name)
+	{
+		Assert.notNull(element, "element should never be null");
+		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
+		final Element retVal = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
+		element.appendChild(retVal);
+		return retVal;
+	}
+
+	public static Attr createXsdAttr(Node element, String name)
+	{
+		Assert.notNull(element, "element should never be null");
+		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
+		final Attr retVal = doc.createAttributeNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
+
+		element.appendChild(retVal);
+		return retVal;
+	}
+
+
+	public static Element createXsdReference(Node element, String name)
 	{
 		Assert.notNull(element, "element should never be null");
 		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
