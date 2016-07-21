@@ -2,31 +2,29 @@ package com.ethlo.schematools.jsons2xsd;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.XMLConstants;
-
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Jsons2Xsd {
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    private static Map<String, Element> unusedElements;
-
     private static String ns;
 
-    public static enum OuterWrapping {
-        ELEMENT, TYPE;
+    public enum OuterWrapping {
+        ELEMENT, TYPE
     }
 
     private static final Map<String, String> typeMapping = new HashMap<>();
@@ -61,7 +59,7 @@ public class Jsons2Xsd {
         typeMapping.put("string|style", "string");
     }
 
-    public static Document convert(Reader jsonSchema, String targetNameSpaceUri, OuterWrapping wrapping, String name) throws JsonProcessingException, IOException {
+    public static Document convert(Reader jsonSchema, String targetNameSpaceUri, OuterWrapping wrapping, String name) throws IOException {
         JsonNode rootNode = mapper.readTree(jsonSchema);
 
         final Document xsdDoc = XmlUtil.newDocument();
@@ -100,7 +98,7 @@ public class Jsons2Xsd {
         }
         final Element schemaSequence = createXsdElement(schemaComplexType, "sequence");
 
-        doIterate(schemaSequence, properties);
+        doIterate(schemaSequence, properties, getRequiredList(rootNode));
 
         //handle external defs
         final JsonNode definitions = rootNode.path("definitions");
@@ -161,25 +159,24 @@ public class Jsons2Xsd {
                 final JsonNode properties = val.get("properties");
                 Assert.notNull(properties, "\"properties\" property should be found in \"" + key + "\"");
 
-                doIterate(schemaSequence, properties);
+                doIterate(schemaSequence, properties, getRequiredList(val));
             }
 
         }
     }
 
-    private static void doIterate(Element elem, JsonNode node) {
+    private static void doIterate(Element elem, JsonNode node, List<String> requiredList) {
         final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
         while (fieldIter.hasNext()) {
             final Entry<String, JsonNode> entry = fieldIter.next();
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
-            doIterateSingle(key, val, elem);
+            doIterateSingle(key, val, elem, requiredList.contains(key));
         }
     }
 
-    private static void doIterateSingle(String key, JsonNode val, Element elem) {
+    private static void doIterateSingle(String key, JsonNode val, Element elem, boolean required) {
         final String xsdType = determineXsdType(key, val);
-        final boolean required = val.path("required").booleanValue();
         final Element nodeElem = createXsdElement(elem, "element");
         String name;
         if (!key.equals("link")) {
@@ -193,8 +190,7 @@ public class Jsons2Xsd {
             // Simple type
             nodeElem.setAttribute("type", xsdType);
         }
-        if (! required)
-        {
+        if (!required) {
             // Not required
             nodeElem.setAttribute("minOccurs", "0");
         }
@@ -282,7 +278,7 @@ public class Jsons2Xsd {
             final Element complexType = createXsdElement(nodeElem, "complexType");
             final Element sequence = createXsdElement(complexType, "sequence");
             Assert.notNull(properties, "'object' type must have a 'properties' attribute");
-            doIterate(sequence, properties);
+            doIterate(sequence, properties, getRequiredList(val));
         }
 
     }
@@ -335,10 +331,6 @@ public class Jsons2Xsd {
         final JsonNode arrItems = jsonNode.path("items");
 //		final String arrayXsdType = getType(arrItems.path("type").textValue(), arrItems.path("format").textValue());
         final String arrayXsdType = determineXsdType(arrItems.path("type").textValue(), arrItems);
-        final boolean arrRequired = arrItems.path("required").booleanValue();
-        if (!arrRequired) {
-            nodeElem.setAttribute("minOccurs", "0");
-        }
         final Element complexType = createXsdElement(nodeElem, "complexType");
         final Element sequence = createXsdElement(complexType, "sequence");
         final Element arrElem = createXsdElement(sequence, "element");
@@ -396,5 +388,18 @@ public class Jsons2Xsd {
         final String key = (type + (format != null ? ("|" + format) : "")).toLowerCase();
         final String retVal = typeMapping.get(key);
         return retVal;
+    }
+
+    private static List<String> getRequiredList(JsonNode jsonNode) {
+        if (jsonNode.path("required").isMissingNode()) {
+            return Collections.emptyList();
+        }
+        Assert.isTrue(jsonNode.path("required").isArray(), "required must have type: string array");
+        List<String> requiredList = new ArrayList<>();
+        for (JsonNode requiredField : jsonNode.withArray("required")) {
+            Assert.isTrue(requiredField.isTextual(), "required must be string");
+            requiredList.add(requiredField.asText());
+        }
+        return requiredList;
     }
 }
