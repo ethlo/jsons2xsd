@@ -17,11 +17,13 @@ import org.w3c.dom.Node;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Jsons2Xsd {
     private final static ObjectMapper mapper = new ObjectMapper();
 
     private static String ns;
+    private static Map<String, JsonNode> basicTypeRef = new HashMap<>();
 
     public enum OuterWrapping {
         ELEMENT, TYPE
@@ -90,6 +92,13 @@ public class Jsons2Xsd {
 
         }
 
+        //handle external defs
+        final JsonNode definitions = rootNode.path("definitions");
+        Assert.notNull(definitions, "\"definitions\"  should be found in root of JSON schema\"");
+
+        doIterateDefinitionsWithBasicType(definitions);
+        doIterateDefinitions(schemaRoot, definitions);
+
         final Element schemaComplexType = createXsdElement(schemaRoot, "complexType");
 
         //if (wrapping == OuterWrapping.TYPE)
@@ -100,21 +109,24 @@ public class Jsons2Xsd {
 
         doIterate(schemaSequence, properties, getRequiredList(rootNode));
 
-        //handle external defs
-        final JsonNode definitions = rootNode.path("definitions");
-        Assert.notNull(definitions, "\"definitions\"  should be found in root of JSON schema\"");
-
-        doIterateDefinitions(schemaRoot, definitions);
-
-
         return xsdDoc;
+    }
+
+    private static void doIterateDefinitionsWithBasicType(JsonNode node) {
+        final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
+        while (fieldIter.hasNext()) {
+            final Entry<String, JsonNode> entry = fieldIter.next();
+            final String key = entry.getKey();
+            final JsonNode val = entry.getValue();
+            if (val.get("type") != null && !val.get("type").textValue().equals("object")) {
+                basicTypeRef.put(key, val);
+            }
+        }
     }
 
     private static void doIterateDefinitions(Element elem, JsonNode node) {
         final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
         while (fieldIter.hasNext()) {
-
-
 
             //Create a complex type
             //get properties
@@ -123,35 +135,22 @@ public class Jsons2Xsd {
             final Entry<String, JsonNode> entry = fieldIter.next();
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
-            if (key.equals("Link")) {
-                final Element schemaComplexType = createXsdElement(elem, "complexType");
-                schemaComplexType.setAttribute("name", key);
-                final Element href = createXsdElement(schemaComplexType, "attribute");
-                final Element rel = createXsdElement(schemaComplexType, "attribute");
-                final Element title = createXsdElement(schemaComplexType, "attribute");
-                final Element method = createXsdElement(schemaComplexType, "attribute");
-                final Element type = createXsdElement(schemaComplexType, "attribute");
 
-                href.setAttribute("name", "href");
-                href.setAttribute("type", "string");
+            if (val.get("enum") != null) {
+                final Element simpleType = createXsdElement(elem, "simpleType");
+                simpleType.setAttribute("name", key);
 
-                rel.setAttribute("name", "rel");
-                rel.setAttribute("type", "string");
+                final Element restriction = createXsdElement(simpleType, "restriction");
+                restriction.setAttribute("base", "string");
 
-                title.setAttribute("name", "title");
-                title.setAttribute("type", "string");
+                final JsonNode enumNode = val.get("enum");
 
-                method.setAttribute("name", "method");
-                method.setAttribute("type", "string");
-
-                type.setAttribute("name", "type");
-                type.setAttribute("type", "string");
-
-
-            }
-            else {
-
-
+                for (int i = 0; i < enumNode.size(); i++) {
+                    final String enumVal = enumNode.path(i).asText();
+                    final Element enumElem = createXsdElement(restriction, "enumeration");
+                    enumElem.setAttribute("value", enumVal);
+                }
+            } else if (val.get("type") == null || val.get("type").textValue().equals("object")) {
                 final Element schemaComplexType = createXsdElement(elem, "complexType");
                 schemaComplexType.setAttribute("name", key);
 
@@ -161,7 +160,6 @@ public class Jsons2Xsd {
 
                 doIterate(schemaSequence, properties, getRequiredList(val));
             }
-
         }
     }
 
@@ -176,7 +174,6 @@ public class Jsons2Xsd {
     }
 
     private static void doIterateSingle(String key, JsonNode val, Element elem, boolean required) {
-        final String xsdType = determineXsdType(key, val);
         final Element nodeElem = createXsdElement(elem, "element");
         String name;
         if (!key.equals("link")) {
@@ -186,60 +183,74 @@ public class Jsons2Xsd {
         }
         nodeElem.setAttribute("name", name);
 
-        if (!"object".equals(xsdType) && !"array".equals(xsdType)) {
-            // Simple type
-            nodeElem.setAttribute("type", xsdType);
-        }
-        if (!required) {
-            // Not required
-            nodeElem.setAttribute("minOccurs", "0");
-        }
+        boolean cont;
+        do {
+            cont = false;
+            final String xsdType = determineXsdType(key, val);
+            if (!"object".equals(xsdType) && !"array".equals(xsdType)) {
+                // Simple type
+                nodeElem.setAttribute("type", xsdType);
+            }
+            if (!required) {
+                // Not required
+                nodeElem.setAttribute("minOccurs", "0");
+            }
 
-        switch (xsdType) {
-            case "array":
-                handleArray(nodeElem, val);
-                break;
+            switch (xsdType) {
+                case "array":
+                    handleArray(nodeElem, val);
+                    break;
 
-            case "decimal":
-            case "int":
-                handleNumber(nodeElem, xsdType, val);
-                break;
+                case "decimal":
+                case "int":
+                    handleNumber(nodeElem, xsdType, val);
+                    break;
 
-            case "enum":
-                handleEnum(nodeElem, val);
-                break;
+                case "enum":
+                    handleEnum(nodeElem, val);
+                    break;
 
-            case "object":
-                handleObject(nodeElem, val);
-                break;
+                case "object":
+                    handleObject(nodeElem, val);
+                    break;
 
-            case "string":
-                handleString(nodeElem, val);
-                break;
+                case "string":
+                    handleString(nodeElem, val);
+                    break;
 
-            case "reference":
-                handleReference(nodeElem, val);
-                break;
-        }
-
-
+                case "reference":
+                    cont = handleReference(nodeElem, val);
+                    break;
+            }
+        } while (cont);
     }
 
-
-    private static void handleReference(Element nodeElem, JsonNode val) {
+    private static boolean handleReference(Element nodeElem, JsonNode val) {
         final JsonNode refs = val.get("$ref");
         nodeElem.removeAttribute("type");
+
         String fixRef = refs.asText().replace("#/definitions/", ns + ":");
         String name = fixRef.substring(ns.length() + 1);
         String oldName = nodeElem.getAttribute("name");
 
-
         if (oldName.length() <= 0) {
             nodeElem.setAttribute("name", name);
         }
-        nodeElem.setAttribute("type", fixRef);
 
-
+        if (!basicTypeRef.containsKey(name)) {
+            nodeElem.setAttribute("type", fixRef);
+            return false;
+        } else {
+            ((ObjectNode) val).remove("$ref");
+            final Iterator<Entry<String, JsonNode>> fieldIter = basicTypeRef.get(name).fields();
+            while (fieldIter.hasNext()) {
+                final Entry<String, JsonNode> entry = fieldIter.next();
+                final String lkey = entry.getKey();
+                final JsonNode lval = entry.getValue();
+                ((ObjectNode) val).put(lkey, lval.deepCopy());
+            }
+            return true;
+        }
     }
 
     private static void handleString(Element nodeElem, JsonNode val) {
@@ -274,7 +285,6 @@ public class Jsons2Xsd {
     private static void handleObject(Element nodeElem, JsonNode val) {
         final JsonNode properties = val.get("properties");
         if (properties != null) {
-            System.out.println("In PROP");
             final Element complexType = createXsdElement(nodeElem, "complexType");
             final Element sequence = createXsdElement(complexType, "sequence");
             Assert.notNull(properties, "'object' type must have a 'properties' attribute");
@@ -369,7 +379,6 @@ public class Jsons2Xsd {
             Assert.notNull(xsdType, "Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
             return xsdType;
         }
-
     }
 
     private static Integer getIntVal(JsonNode node, String attribute) {
