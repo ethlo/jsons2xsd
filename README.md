@@ -1,6 +1,6 @@
 jsons2xsd
 =========
-[![Maven Central](https://img.shields.io/maven-central/v/com.ethlo.schematools/jsons2xsd.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ethlo.persistence.tools%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.ethlo.schematools/jsons2xsd.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ethlo.schematools%22)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/ethlo/jsons2xsd.svg?branch=master)](https://travis-ci.org/ethlo/jsons2xsd)
 
