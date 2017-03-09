@@ -1,4 +1,4 @@
-Jsons2xsd
+jsons2xsd
 =========
 [![Maven Central](https://img.shields.io/maven-central/v/com.ethlo.schematools/jsons2xsd.svg)]()
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)]()
@@ -6,28 +6,12 @@ Jsons2xsd
 
 Json schema (http://json-schema.org/) to XML schema (XSD) converter.
 
-# Features
+## Features
 * Single purpose library
 * Fast
 * Minimal dependencies (Jackson)
 
-# Build status
-
-[![Build Status](https://travis-ci.org/ethlo/jsons2xsd.png?branch=master)](https://travis-ci.org/ethlo/jsons2xsd)
-
-# Maven repository
-http://ethlo.com/maven
-
-# Maven artifact
-```xml
-<dependency>
-  <groupId>com.ethlo.schematools</groupId>
-  <artifactId>jsons2xsd</artifactId>
-  <version>${jsons2xsd.version}</version>
-</dependency>
-```
-
-# Usage
+## Usage
 
 ```java
 final Reader jsonSchema = ...;
