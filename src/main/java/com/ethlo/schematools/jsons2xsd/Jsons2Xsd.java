@@ -76,7 +76,7 @@ public class Jsons2Xsd {
 
 
         final String type = rootNode.path("type").textValue();
-        Assert.isTrue("object".equals(type), "root should have type=\"object\"");
+        Assert.isTrue("object".equals(type) || "array".equals(type), "root should have type=\"object\" or type=\"array\"");
 
         final JsonNode properties = rootNode.get("properties");
         Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
