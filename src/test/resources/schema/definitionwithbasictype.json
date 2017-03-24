@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Other Definition",
+    "type": "object",
+
+    "definitions": {
+        "TestEnum": {
+            "enum": [
+                "A",
+                "B",
+                "C",
+                "D"
+            ]
+        },
+        "Item": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Value": {
+                    "$ref": "#/definitions/GUID"
+                },
+                "Type": {
+                    "$ref": "#/definitions/TestEnum"
+                }
+            },
+            "required": [
+                "Value",
+                "Type"
+            ]
+        },
+        "GUID": {
+            "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+            "type": "string"
+        },
+        "TestArray": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Item" }
+        }
+    },
+
+    "properties": {
+        "content": { "$ref": "#/definitions/TestArray" }
+    },
+    
+    "required": [
+        "content"
+    ]
+}

@@ -60,6 +60,16 @@ public class ConversionTest
 		}
 	}
 
+	@Test
+	public void testOtherDefinition() throws IOException, TransformerException
+	{
+		try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/definitionwithbasictype.json")))
+		{
+			final Document doc = Jsons2Xsd.convert(r, "http://cableapi.cablelabs.com/schemas/v1/DefinitionWithBasicType", OuterWrapping.ELEMENT, "DefinitionWithBasicType");
+			System.out.println(XmlUtil.asXmlString(doc.getDocumentElement()));
+		}
+	}
+
 	private Document doConvert(String file) throws IOException
 	{
 		try (final Reader r = new InputStreamReader(getClass().getResourceAsStream(file)))
