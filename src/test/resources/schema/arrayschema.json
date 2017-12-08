@@ -1,0 +1,18 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "price": {
+                "type": "number"
+            },
+            "name": {
+                "type": "string"
+            },
+            "isExpired": {
+                "default": false,
+                "type": "boolean"
+            }
+        }
+    }
+}
