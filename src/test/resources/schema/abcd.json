@@ -1,1 +1,14 @@
-{    "type": "object",    "properties": {        "EXP": {            "type": "date-time"        },        "GTIN": {            "type": "string"        },        "Martin": {            "type": "int"        }    }}
+{
+	"type": "object",
+	"properties": {
+		"EXP": {
+			"type": "date-time"
+		},
+		"GTIN": {
+			"type": "string"
+		},
+		"Martin": {
+			"type": "int"
+		}
+	}
+}

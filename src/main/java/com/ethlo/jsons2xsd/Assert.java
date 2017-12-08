@@ -1,4 +1,4 @@
-package com.ethlo.schematools.jsons2xsd;
+package com.ethlo.jsons2xsd;
 
 /**
  * 

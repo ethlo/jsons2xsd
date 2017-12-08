@@ -1,4 +1,4 @@
-package com.ethlo.schematools.jsons2xsd;
+package com.ethlo.jsons2xsd;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -84,44 +84,6 @@ public class XmlUtil
 		element.appendChild(retVal);
 		return retVal;
 	}
-
-	public static Attr createXsdAttr(Node element, String name)
-	{
-		Assert.notNull(element, "element should never be null");
-		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
-		final Attr retVal = doc.createAttributeNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
-
-		element.appendChild(retVal);
-		return retVal;
-	}
-
-
-	public static Element createXsdReference(Node element, String name)
-	{
-		Assert.notNull(element, "element should never be null");
-		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
-		final Element retVal = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
-		element.appendChild(retVal);
-		return retVal;
-	}
-	
-	public static Element prependXsdElement(Node element, String name)
-	{
-		Assert.notNull(element, "element should never be null");
-		final Document doc = element.getOwnerDocument() != null ? element.getOwnerDocument() : ((Document)element);
-		final Element retVal = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, name);
-		final Node first = element.getFirstChild();
-		if (first != null)
-		{
-			element.insertBefore(retVal, first);
-		}
-		else
-		{
-			element.appendChild(retVal);
-		}
-		return retVal;
-	}
-	
 }
 
 
