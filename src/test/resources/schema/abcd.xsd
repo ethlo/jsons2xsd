@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+    targetNamespace="http://ethlo.com/schema/abcd"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:my="http://ethlo.com/schema/abcd">
+    <element name="special" type="my:special"/>
+    <complexType name="special">
+        <sequence>
+            <element minOccurs="0" name="EXP" type="dateTime"/>
+            <element minOccurs="0" name="GTIN" type="string"/>
+            <element minOccurs="0" name="Martin" type="int"/>
+        </sequence>
+    </complexType>
+</schema>
