@@ -1,13 +1,36 @@
 package com.ethlo.jsons2xsd;
 
-import com.ethlo.jsons2xsd.Jsons2Xsd.SchemaWrapping;
+/*-
+ * #%L
+ * jsons2xsd
+ * %%
+ * Copyright (C) 2014 - 2017 Morten Haraldsen (ethlo)
+ * %%
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * #L%
+ */
 
 public class Config
 {
-    private boolean lowercaseElements;
     private String targetNamespace;
     private String nsAlias;
-    private SchemaWrapping wrapping;
+    private boolean createRootElement;
     private String name;
     private boolean attributesQualified;
     
@@ -16,11 +39,6 @@ public class Config
         return attributesQualified;
     }
 
-    public boolean isLowercaseElements()
-    {
-        return lowercaseElements;
-    }
-    
     public String getName()
     {
         return name;
@@ -36,25 +54,18 @@ public class Config
         return nsAlias;
     }
 
-    public SchemaWrapping getWrapping()
+    public boolean isCreateRootElement()
     {
-        return wrapping;
+        return createRootElement;
     }
 
     public static class Builder
     {
-        private boolean lowercaseElements;
-        private String targetNamespace;
-        private String nsAlias;
-        private SchemaWrapping wrapping;
         private String name;
-        private boolean attributesQualified;
-
-        public Builder lowercaseElements(boolean lowercaseElements)
-        {
-            this.lowercaseElements = lowercaseElements;
-            return this;
-        }
+        private String targetNamespace;
+        private String nsAlias = "x";
+        private boolean createRootElement = false;
+        private boolean attributesQualified = false;
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -68,14 +79,17 @@ public class Config
             return this;
         }
 
-        public Builder wrapping(SchemaWrapping wrapping)
+        public Builder createRootElement(boolean b)
         {
-            this.wrapping = wrapping;
+            this.createRootElement = b;
             return this;
         }
 
         public Config build()
         {
+            Assert.notNull(name, "name must be set");
+            Assert.notNull(targetNamespace, "targetNamespace must be set");
+            
             return new Config(this);
         }
 
@@ -94,10 +108,9 @@ public class Config
 
     private Config(Builder builder)
     {
-        this.lowercaseElements = builder.lowercaseElements;
         this.targetNamespace = builder.targetNamespace;
         this.nsAlias = builder.nsAlias;
-        this.wrapping = builder.wrapping;
+        this.createRootElement = builder.createRootElement;
         this.name = builder.name;
         this.attributesQualified = builder.attributesQualified;
     }

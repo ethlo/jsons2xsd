@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ethlo.json2xsd</groupId>
 	<artifactId>jsons2xsd</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -18,6 +18,68 @@
 			</extension>
 		</extensions>
 		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.9</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>4.3.0</version>
+				<configuration>
+					<repoToken>$</repoToken>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.12</version>
+				<configuration>
+					<verbose>false</verbose>
+					<addSvnKeyWords>true</addSvnKeyWords>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<licenseName>mit</licenseName>
+							<inceptionYear>2014</inceptionYear>
+							<organizationName>Morten Haraldsen (ethlo)</organizationName>
+							<addSvnKeyWords>false</addSvnKeyWords>
+							<roots>
+								<root>src/main/java</root>
+								<root>src/test</root>
+							</roots>
+							<includes>
+								<include>*.java</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-third-party</id>
+						<goals>
+							<goal>add-third-party</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+							<excludedScopes>test</excludedScopes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -134,11 +196,11 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.8.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gpg.skip>true</gpg.skip>
 	</properties>
 </project>
