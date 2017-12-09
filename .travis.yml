@@ -3,3 +3,5 @@ jdk:
   - oraclejdk8
 sudo: required 
 dist: precise
+after_success:
+  - mvn clean test jacoco:report coveralls:report
