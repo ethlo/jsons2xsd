@@ -33,10 +33,16 @@ public class Config
     private boolean createRootElement;
     private String name;
     private boolean attributesQualified;
+    private boolean includeOnlyUsedTypes;
     
     public boolean isAttributesQualified()
     {
         return attributesQualified;
+    }
+    
+    public boolean isIncludeOnlyUsedTypes()
+    {
+        return includeOnlyUsedTypes;
     }
 
     public String getName()
@@ -66,6 +72,7 @@ public class Config
         private String nsAlias = "x";
         private boolean createRootElement = false;
         private boolean attributesQualified = false;
+        private boolean includeOnlyUsedTypes = false;
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -82,6 +89,12 @@ public class Config
         public Builder createRootElement(boolean b)
         {
             this.createRootElement = b;
+            return this;
+        }
+        
+        public Builder includeOnlyUsedTypes(boolean b)
+        {
+            this.includeOnlyUsedTypes = b;
             return this;
         }
 
@@ -113,5 +126,6 @@ public class Config
         this.createRootElement = builder.createRootElement;
         this.name = builder.name;
         this.attributesQualified = builder.attributesQualified;
+        this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
     }
 }

@@ -124,10 +124,10 @@ public class ConversionTest
 
         final Config cfg = new Config.Builder()
             .createRootElement(true)
-            .targetNamespace("http://cableapi.cablelabs.com/schemas/v1/CMTS")
-            .nsAlias("cmts")
-            .name("CMTS")
-            .attributesQualified(true)
+            .targetNamespace("http://cableapi.cablelabs.com/schemas/v1/Account")
+            .nsAlias("account")
+            .name("Account")
+            .includeOnlyUsedTypes(true)
             .build();
         final Document doc = Jsons2Xsd.convert(schema, definitions, cfg);
         final String actual = XmlUtil.asXmlString(doc.getDocumentElement());

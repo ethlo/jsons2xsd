@@ -126,7 +126,7 @@ public class Jsons2Xsd
             case TYPE_ARRAY:
                 final JsonNode arrItems = rootNode.path("items");
                 final String arrayXsdType = determineXsdType(arrItems.path("type").textValue(), arrItems);
-                handleArrayElements(neededElements, rootNode, cfg.getTargetNamespace(), arrItems, arrayXsdType, schemaRoot);
+                handleArrayElements(neededElements, rootNode, arrItems, arrayXsdType, schemaRoot, cfg);
                 break;
 
             default:
@@ -144,7 +144,7 @@ public class Jsons2Xsd
             definitions = rootNode.path("definitions");
         }
         
-        doIterateDefinitions(neededElements, schemaRoot, definitions, nsAlias);
+        doIterateDefinitions(neededElements, schemaRoot, definitions, cfg);
 
         return schemaRoot.getOwnerDocument();
     }
@@ -167,7 +167,7 @@ public class Jsons2Xsd
 
         final Element schemaSequence = element(schemaComplexType, XSD_SEQUENCE);
         
-        doIterate(neededElements, schemaSequence, properties, getRequiredList(rootNode), nsAlias);
+        doIterate(neededElements, schemaSequence, properties, getRequiredList(rootNode), cfg);
     }
 
     private static Element createDocument(Config cfg)
@@ -186,7 +186,7 @@ public class Jsons2Xsd
         return schemaRoot;
     }
 
-    private static void doIterateDefinitions(Set<String> neededElements, Element elem, JsonNode node, String ns)
+    private static void doIterateDefinitions(Set<String> neededElements, Element elem, JsonNode node, Config cfg)
     {
         final Iterator<Entry<String, JsonNode>> iter = node.fields();
         while (iter.hasNext())
@@ -194,6 +194,12 @@ public class Jsons2Xsd
             final Entry<String, JsonNode> entry = iter.next();
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
+            
+            if (! neededElements.contains(key) && cfg.isIncludeOnlyUsedTypes())
+            {
+                continue;
+            }
+            
             if (key.equals("Link"))
             {
                 final Element schemaComplexType = element(elem, XSD_COMPLEXTYPE);
@@ -228,12 +234,12 @@ public class Jsons2Xsd
                 final JsonNode properties = val.get(FIELD_PROPERTIES);
                 Assert.notNull(properties, "\"properties\" property should be found in \"" + key + "\"");
 
-                doIterate(neededElements, schemaSequence, properties, getRequiredList(val), ns);
+                doIterate(neededElements, schemaSequence, properties, getRequiredList(val), cfg);
             }
         }
     }
 
-    private static void doIterate(Set<String> neededElements, Element elem, JsonNode node, List<String> requiredList, String ns)
+    private static void doIterate(Set<String> neededElements, Element elem, JsonNode node, List<String> requiredList, Config cfg)
     {
         final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
         while (fieldIter.hasNext())
@@ -241,11 +247,11 @@ public class Jsons2Xsd
             final Entry<String, JsonNode> entry = fieldIter.next();
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
-            doIterateSingle(neededElements, key, val, elem, requiredList.contains(key), ns);
+            doIterateSingle(neededElements, key, val, elem, requiredList.contains(key), cfg);
         }
     }
 
-    private static void doIterateSingle(Set<String> neededElements, String key, JsonNode val, Element elem, boolean required, String ns)
+    private static void doIterateSingle(Set<String> neededElements, String key, JsonNode val, Element elem, boolean required, Config cfg)
     {
         final String xsdType = determineXsdType(key, val);
         final Element nodeElem = element(elem, XSD_ELEMENT);
@@ -276,7 +282,7 @@ public class Jsons2Xsd
         switch (xsdType)
         {
             case TYPE_ARRAY:
-                handleArray(neededElements, nodeElem, val, ns);
+                handleArray(neededElements, nodeElem, val, cfg);
                 break;
 
             case "decimal":
@@ -289,7 +295,7 @@ public class Jsons2Xsd
                 break;
 
             case TYPE_OBJECT:
-                handleObject(neededElements, nodeElem, val, ns);
+                handleObject(neededElements, nodeElem, val, cfg);
                 break;
 
             case TYPE_STRING:
@@ -297,19 +303,19 @@ public class Jsons2Xsd
                 break;
 
             case TYPE_REFERENCE:
-                handleReference(neededElements, nodeElem, val, ns);
+                handleReference(neededElements, nodeElem, val, cfg);
                 break;
                 
             default:
         }
     }
 
-    private static void handleReference(Set<String> neededElements, Element nodeElem, JsonNode val, String ns)
+    private static void handleReference(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
     {
         final JsonNode refs = val.get("$ref");
         nodeElem.removeAttribute("type");
-        String fixRef = refs.asText().replace("#/definitions/", ns + ":");
-        String name = fixRef.substring(ns.length() + 1);
+        String fixRef = refs.asText().replace("#/definitions/", cfg.getNsAlias() + ":");
+        String name = fixRef.substring(cfg.getNsAlias().length() + 1);
         String oldName = nodeElem.getAttribute(FIELD_NAME);
 
         if (oldName.length() <= 0)
@@ -354,7 +360,7 @@ public class Jsons2Xsd
         }
     }
 
-    private static void handleObject(Set<String> neededElements, Element nodeElem, JsonNode val, String ns)
+    private static void handleObject(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
     {
         final JsonNode properties = val.get(FIELD_PROPERTIES);
         if (properties != null)
@@ -362,7 +368,7 @@ public class Jsons2Xsd
             final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
             final Element sequence = element(complexType, XSD_SEQUENCE);
             Assert.notNull(properties, "'object' type must have a 'properties' attribute");
-            doIterate(neededElements, sequence, properties, getRequiredList(val), ns);
+            doIterate(neededElements, sequence, properties, getRequiredList(val), cfg);
         }
     }
 
@@ -407,25 +413,25 @@ public class Jsons2Xsd
         }
     }
 
-    private static void handleArray(Set<String> neededElements, Element nodeElem, JsonNode jsonNode, String ns)
+    private static void handleArray(Set<String> neededElements, Element nodeElem, JsonNode jsonNode, Config cfg)
     {
         final JsonNode arrItems = jsonNode.path("items");
         final String arrayXsdType = determineXsdType(arrItems.path("type").textValue(), arrItems);
         final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
         final Element sequence = element(complexType, XSD_SEQUENCE);
         final Element arrElem = element(sequence, XSD_ELEMENT);
-        handleArrayElements(neededElements, jsonNode, ns, arrItems, arrayXsdType, arrElem);
+        handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, arrElem, cfg);
     }
 
-    private static void handleArrayElements(Set<String> neededElements, JsonNode jsonNode, String ns, final JsonNode arrItems, final String arrayXsdType, final Element arrElem)
+    private static void handleArrayElements(Set<String> neededElements, JsonNode jsonNode, final JsonNode arrItems, final String arrayXsdType, final Element arrElem, Config cfg)
     {
         if (arrayXsdType.equals(TYPE_REFERENCE))
         {
-            handleReference(neededElements, arrElem, arrItems, ns);
+            handleReference(neededElements, arrElem, arrItems, cfg);
         }
         else if (arrayXsdType.equals(TYPE_OBJECT))
         {
-            handleObject(neededElements, arrElem, arrItems, ns);
+            handleObject(neededElements, arrElem, arrItems, cfg);
         }
         else
         {
