@@ -17,20 +17,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-/**
- * 
- * @author mha
- *
- */
 public class XmlUtil
 {
+    private XmlUtil(){}
+    
 	public static String asXmlString(Node node) throws IOException
 	{
 		final Source source = new DOMSource(node);
@@ -67,7 +63,7 @@ public class XmlUtil
 		}
 		catch (ParserConfigurationException e)
 		{
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 	

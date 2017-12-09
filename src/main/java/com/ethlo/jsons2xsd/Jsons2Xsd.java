@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,7 +26,7 @@ public class Jsons2Xsd
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public enum OuterWrapping
+    public enum SchemaWrapping
     {
         ELEMENT, TYPE
     }
@@ -77,7 +79,7 @@ public class Jsons2Xsd
         typeMapping.put("string|style", TYPE_STRING);
     }
     
-    public static Document convert(Reader jsonSchema, Reader definitionSchema, String targetNameSpaceUri, OuterWrapping wrapping, String ns) throws JsonProcessingException, IOException
+    public static Document convert(Reader jsonSchema, Reader definitionSchema, Config cfg) throws JsonProcessingException, IOException
     {
         final Set<String> neededElements = new HashSet<>();
 
@@ -87,12 +89,14 @@ public class Jsons2Xsd
         xsdDoc.setXmlStandalone(true);
 
         final Element schemaRoot = createXsdElement(xsdDoc, "schema");
-        schemaRoot.setAttribute("targetNamespace", targetNameSpaceUri);
-        schemaRoot.setAttribute("xmlns:" + ns.toLowerCase(), targetNameSpaceUri);
+        schemaRoot.setAttribute("targetNamespace", cfg.getTargetNamespace());
+        schemaRoot.setAttribute("xmlns:" + cfg.getNsAlias(), cfg.getTargetNamespace());
 
         schemaRoot.setAttribute("elementFormDefault", "qualified");
-        schemaRoot.setAttribute("attributeFormDefault", "qualified");
-
+        if (cfg.isAttributesQualified())
+        {
+            schemaRoot.setAttribute("attributeFormDefault", "qualified");
+        }
 
         final String type = rootNode.path("type").textValue();
         Assert.isTrue("object".equals(type), "root should have type=\"object\"");
@@ -100,30 +104,21 @@ public class Jsons2Xsd
         final JsonNode properties = rootNode.get("properties");
         Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
 
-
-
         Element wrapper = schemaRoot;
-        if (wrapping == OuterWrapping.ELEMENT)
+        if (cfg.getWrapping() == SchemaWrapping.ELEMENT)
         {
             wrapper = createXsdElement(schemaRoot, "element");
-            wrapper.setAttribute("name", ns);
-            wrapper.setAttribute("type", ns.toLowerCase() + ":" + ns);
+            wrapper.setAttribute("name", cfg.getName());
+            wrapper.setAttribute("type", cfg.getNsAlias() + ":" + cfg.getName());
 
         }
 
         final Element schemaComplexType = createXsdElement(schemaRoot, "complexType");
 
-    //if (wrapping == OuterWrapping.TYPE)
-        {
-            schemaComplexType.setAttribute("name", ns);
-        }
+        schemaComplexType.setAttribute("name", cfg.getName());
         final Element schemaSequence = createXsdElement(schemaComplexType, "sequence");
 
-        doIterate(neededElements, schemaSequence, properties, ns.toLowerCase());
-
-
-
-
+        doIterate(neededElements, schemaSequence, properties, cfg.getNsAlias());
 
         //find references in Defs
         JsonNode definitionsRootNode = mapper.readTree(definitionSchema);
@@ -131,11 +126,8 @@ public class Jsons2Xsd
         final JsonNode definitions = definitionsRootNode.path("definitions");
         Assert.notNull(definitions, "\"definitions\"  should be found in root of JSON schema\"");
         final Iterator<Entry<String, JsonNode>> fieldIter = definitions.fields();
-        while(fieldIter.hasNext()) {
-            //Create a complex type
-            //get properties
-            //call doiteration with properties
-
+        while(fieldIter.hasNext())
+        {
             final Entry<String, JsonNode> entry = fieldIter.next();
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
@@ -149,12 +141,9 @@ public class Jsons2Xsd
                 final JsonNode defProperties = val.get("properties");
                 Assert.notNull(defProperties, "\"properties\" property should be found in \"" + key + "\"");
 
-                doIterate(neededElements, defSchemaSequence, defProperties, ns.toLowerCase());
+                doIterate(neededElements, defSchemaSequence, defProperties, cfg.getNsAlias());
             }
-
         }
-
-
 
         return xsdDoc;
     }
@@ -219,13 +208,13 @@ public class Jsons2Xsd
         }
     }
 
-    public static Document convert(Reader jsonSchema, String nsUri, OuterWrapping wrapping, String nsAlias) throws IOException
+    public static Document convert(Reader jsonSchema, Config cfg) throws IOException
     {
         final JsonNode rootNode = mapper.readTree(jsonSchema);
-
-        final Element schemaRoot = createDocument(nsAlias, nsUri);
+        final String nsAlias = cfg.getNsAlias();
+        final Element schemaRoot = createDocument(cfg);
         
-        final Set<String> neededElements = new HashSet<>();
+        final SortedSet<String> neededElements = new TreeSet<>();
         
         final String type = rootNode.path("type").textValue();
         JsonNode properties;
@@ -235,15 +224,15 @@ public class Jsons2Xsd
                 properties = rootNode.get(JS_PROPERTIES);
                 Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
                 
-                if (wrapping == OuterWrapping.ELEMENT)
+                if (cfg.getWrapping() == SchemaWrapping.ELEMENT)
                 {
                     final Element wrapper = createXsdElement(schemaRoot, XSD_ELEMENT);
-                    wrapper.setAttribute("name", nsAlias);
-                    wrapper.setAttribute("type", nsAlias.toLowerCase() + ":" + nsAlias);
+                    wrapper.setAttribute("name", cfg.getName());
+                    wrapper.setAttribute("type", nsAlias + ":" + cfg.getName());
                 }
 
                 final Element schemaComplexType = createXsdElement(schemaRoot, XSD_COMPLEXTYPE);
-                schemaComplexType.setAttribute("name", nsAlias);
+                schemaComplexType.setAttribute("name", cfg.getName());
 
                 final Element schemaSequence = createXsdElement(schemaComplexType, XSD_SEQUENCE);
                 
@@ -267,15 +256,19 @@ public class Jsons2Xsd
         return schemaRoot.getOwnerDocument();
     }
 
-    private static Element createDocument(String nsAlias, String nsUri)
+    private static Element createDocument(Config cfg)
     {
         final Document xsdDoc = XmlUtil.newDocument();
         xsdDoc.setXmlStandalone(true);
 
         final Element schemaRoot = createXsdElement(xsdDoc, "schema");
-        schemaRoot.setAttribute("targetNamespace", nsUri);
-        schemaRoot.setAttribute("xmlns:" + nsAlias.toLowerCase(), nsUri);
+        schemaRoot.setAttribute("targetNamespace", cfg.getTargetNamespace());
+        schemaRoot.setAttribute("xmlns:" + cfg.getNsAlias(), cfg.getTargetNamespace());
         schemaRoot.setAttribute("elementFormDefault", "qualified");
+        if (cfg.isAttributesQualified())
+        {
+            schemaRoot.setAttribute("attributeFormDefault", "qualified");
+        }
         return schemaRoot;
     }
 
