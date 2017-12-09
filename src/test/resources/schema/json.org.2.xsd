@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:example2="http://json-schema.org/example2.html" elementFormDefault="qualified" targetNamespace="http://json-schema.org/example2.html" xmlns="http://www.w3.org/2001/XMLSchema">
+  <element name="Example2" type="example2:Example2"/>
+  <complexType name="Example2">
+    <sequence>
+      <element name="Storage"/>
+      <element minOccurs="0" name="Fstype">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="ext3"/>
+            <enumeration value="ext4"/>
+            <enumeration value="btrfs"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element minOccurs="0" name="Options">
+        <complexType>
+          <sequence>
+            <element maxOccurs="unbounded" minOccurs="1" name="item" type="string"/>
+          </sequence>
+        </complexType>
+      </element>
+      <element minOccurs="0" name="Readonly" type="boolean"/>
+    </sequence>
+  </complexType>
+  <complexType name="diskDevice">
+    <sequence>
+      <element name="Type">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="disk"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="Device">
+        <simpleType>
+          <restriction base="string">
+            <pattern value="^/dev/[^/]+(/[^/]+)*$"/>
+          </restriction>
+        </simpleType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="diskUUID">
+    <sequence>
+      <element name="Type">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="disk"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="Label">
+        <simpleType>
+          <restriction base="string">
+            <pattern value="^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"/>
+          </restriction>
+        </simpleType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="nfs">
+    <sequence>
+      <element name="Type">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="nfs"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="RemotePath">
+        <simpleType>
+          <restriction base="string">
+            <pattern value="^(/[^/]+)+$"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="Server" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="tmpfs">
+    <sequence>
+      <element name="Type">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="tmpfs"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="SizeInMB">
+        <simpleType>
+          <restriction base="int">
+            <minInclusive value="16"/>
+            <maxInclusive value="512"/>
+          </restriction>
+        </simpleType>
+      </element>
+    </sequence>
+  </complexType>
+</schema>

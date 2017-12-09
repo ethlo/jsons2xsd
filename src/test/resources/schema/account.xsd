@@ -1,0 +1,2533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema attributeFormDefault="qualified" elementFormDefault="qualified"
+    targetNamespace="http://cableapi.cablelabs.com/schemas/v1/CMTS"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cmts="http://cableapi.cablelabs.com/schemas/v1/CMTS">
+    <element name="CMTS" type="cmts:CMTS"/>
+    <complexType name="CMTS">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="AccountNumber" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Type">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Individual"/>
+                        <enumeration value="Joint"/>
+                        <enumeration value="Other"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Pin" type="int"/>
+            <element minOccurs="0" name="Status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Active"/>
+                        <enumeration value="Suspended"/>
+                        <enumeration value="Inactive"/>
+                        <enumeration value="Closed"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="FinancialStatus">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Current"/>
+                        <enumeration value="Due"/>
+                        <enumeration value="InArrears"/>
+                        <enumeration value="Delinquent"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="CreditLimit" type="int"/>
+            <element minOccurs="0" name="Customer" type="cmts:CustomerSummary"/>
+            <element minOccurs="0" name="ServiceAddress" type="cmts:PropertyAddress"/>
+            <element minOccurs="0" name="PrimaryUser" type="cmts:UserSummary"/>
+            <element minOccurs="0" name="Users">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UserSummary" type="cmts:UserSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Financials" type="cmts:FinancialSummary"/>
+            <element minOccurs="0" name="Billing" type="cmts:BillingSummary"/>
+            <element minOccurs="0" name="Payments" type="cmts:PaymentSummary"/>
+            <element minOccurs="0" name="Products">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ProductSummary" type="cmts:ProductSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Devices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="DeviceSummary" type="cmts:DeviceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="TaxExemptions" type="cmts:TaxExemptions"/>
+            <element minOccurs="0" name="Sites">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="SiteSummary" type="cmts:SiteSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Preferences">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PreferenceSummary" type="cmts:PreferenceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="RelatedAccounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="cmts:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="DeviceSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Type" type="string"/>
+            <element name="MacAddress" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="BillingSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="UserSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Username" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="Profile" type="cmts:PartySummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="PartySummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="FinancialSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+            <element name="Description" type="string"/>
+            <element name="ProductStatus" type="string"/>
+            <element name="ProductSerialNumber" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="TaxExemptions">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="SiteSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="MultiTenant" type="boolean"/>
+            <element name="ClliCode" type="string"/>
+            <element name="SiteHours" type="string"/>
+            <element name="Status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Active"/>
+                        <enumeration value="Off"/>
+                        <enumeration value="Pending"/>
+                    </restriction>
+                </simpleType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="PreferenceSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="PreferenceName" type="string"/>
+            <element name="Value" type="string"/>
+            <element name="UnitOfMeasure" type="string"/>
+            <element name="ValueType" type="string"/>
+            <element name="IsSet" type="boolean"/>
+            <element name="PreferenceCategory" type="cmts:PreferenceCategory"/>
+        </sequence>
+    </complexType>
+    <complexType name="PreferenceCategory">
+        <sequence>
+            <element name="PreferenceCategoryName" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="PreferenceCategoryId" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AccountSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Link">
+        <attribute name="href" type="string"/>
+        <attribute name="rel" type="string"/>
+        <attribute name="title" type="string"/>
+        <attribute name="method" type="string"/>
+        <attribute name="type" type="string"/>
+    </complexType>
+    <complexType name="TimePeriod">
+        <sequence>
+            <element name="EndDateTime" type="dateTime"/>
+            <element name="StartDateTime" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="ContactMedium">
+        <sequence>
+            <element name="TelephoneNumbers">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TelephoneNumber" type="cmts:TelephoneNumber"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="FaxNumbers">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="FaxNumber" type="cmts:FaxNumber"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="EmailContacts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EmailContact" type="cmts:EmailContact"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="PostalContacts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PostalContact" type="cmts:PostalContact"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="SystemContacts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="SystemContact" type="cmts:SystemContact"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="TelephoneNumber">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Type" type="string"/>
+            <element name="Number" type="string"/>
+            <element name="Extension" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="FaxNumber">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Type" type="string"/>
+            <element name="Number" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="EmailContact">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Type" type="string"/>
+            <element name="EmailAddress" type="string"/>
+            <element name="Preferred" type="boolean"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="PostalContact">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Type" type="string"/>
+            <element name="AdditionalDeliveryDetail" type="string"/>
+            <element name="PropertyAddress" type="cmts:PropertyAddress"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="PropertyAddress">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element minOccurs="0" name="Postalcode" type="string"/>
+            <element minOccurs="0" name="State_province" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Locality" type="string"/>
+            <element minOccurs="0" name="Property" type="cmts:Property"/>
+            <element minOccurs="0" name="FormattedAddressLine2" type="string"/>
+            <element minOccurs="0" name="FormattedAddressLine1" type="string"/>
+            <element minOccurs="0" name="PostcodeExtension" type="string"/>
+            <element minOccurs="0" name="Country" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Property">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element minOccurs="0" name="LotNr" type="string"/>
+            <element minOccurs="0" name="LandUse" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Elevation" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="LandCover" type="string"/>
+            <element minOccurs="0" name="PropertyAddresses">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PropertyAddress" type="cmts:PropertyAddress"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="NaturalRisks" type="string"/>
+            <element minOccurs="0" name="Geometry" type="cmts:Geometry"/>
+        </sequence>
+    </complexType>
+    <complexType name="Geometry">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="SystemContact">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Type" type="string"/>
+            <element name="ContactNotificationMethod" type="string"/>
+            <element name="ContactNotificationID" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="Individual">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="PreferredName" type="string"/>
+            <element name="Nationality" type="string"/>
+            <element name="PlaceOfBirth" type="string"/>
+            <element name="Skills" type="string"/>
+            <element name="Gender" type="string"/>
+            <element name="MaritalStatus" type="string"/>
+            <element name="Disabilities">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Vision_Impaired"/>
+                        <enumeration value="Hearing_Impaired"/>
+                        <enumeration value="Other"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element name="AliveDuring" type="cmts:TimePeriod"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+            <element name="IdentificationDetails">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="IndividualIdentification" type="cmts:IndividualIdentification"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="AlternateNames">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="IndividualName" type="cmts:IndividualName"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="IndividualName" type="cmts:IndividualName"/>
+        </sequence>
+    </complexType>
+    <complexType name="IndividualName">
+        <sequence>
+            <element minOccurs="0" name="LegalName" type="string"/>
+            <element minOccurs="0" name="FamilyNames" type="string"/>
+            <element minOccurs="0" name="Qualifications" type="string"/>
+            <element minOccurs="0" name="FormOfAddress" type="string"/>
+            <element minOccurs="0" name="GivenNames" type="string"/>
+            <element minOccurs="0" name="AristocraticTitle" type="string"/>
+            <element minOccurs="0" name="FamilyGeneration" type="string"/>
+            <element minOccurs="0" name="PreferredGivenName" type="string"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="FormattedName" type="string"/>
+            <element minOccurs="0" name="Generation" type="string"/>
+            <element minOccurs="0" name="MiddleNames" type="string"/>
+            <element minOccurs="0" name="FamilyNamePrefix" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="IndividualIdentification">
+        <sequence>
+            <element minOccurs="0" name="Identification" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerSegment">
+        <sequence>
+            <element name="Description" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+            <element name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Money">
+        <sequence>
+            <element name="Amount" type="string"/>
+            <element name="Units" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentItemSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="AppliedAmount" type="cmts:Money"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentMethod">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="PaymentMethodName" type="string"/>
+            <element minOccurs="0" name="PaymentDescription" type="string"/>
+            <element minOccurs="0" name="CustomerPayment">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="CustomerPaymentSummary" type="cmts:CustomerPaymentSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="PaymentPlan">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PaymentPlanSummary" type="cmts:PaymentPlanSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="PaymentCard" type="cmts:PaymentCard"/>
+            <element minOccurs="0" name="TokenizedThirdParty" type="cmts:TokenizedThirdParty"/>
+            <element minOccurs="0" name="TokenizedPaymentCard" type="cmts:TokenizedPaymentCard"/>
+            <element minOccurs="0" name="FundsTransfer" type="cmts:FundsTransfer"/>
+            <element minOccurs="0" name="Cash" type="cmts:Cash"/>
+            <element minOccurs="0" name="Check" type="cmts:Check"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerPaymentSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="PaymentConfirmation" type="string"/>
+            <element minOccurs="0" name="Amount" type="cmts:Money"/>
+            <element minOccurs="0" name="RemainingAmount" type="cmts:Money"/>
+            <element minOccurs="0" name="PaymentDate" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentPlanSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Priority" type="int"/>
+            <element minOccurs="0" name="Status" type="boolean"/>
+            <element minOccurs="0" name="PaymentPlanType" type="cmts:PaymentPlanType"/>
+            <element minOccurs="0" name="PaymentLimit" type="cmts:Money"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentPlanType">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Priority" type="int"/>
+            <element minOccurs="0" name="Status" type="boolean"/>
+            <element minOccurs="0" name="PaymentPlanType" type="cmts:PaymentPlanType"/>
+            <element minOccurs="0" name="PaymentLimit" type="cmts:Money"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentCard">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="TokenizedThirdParty">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="TokenizedPaymentCard">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="FundsTransfer">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Cash">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Check">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Quantity">
+        <sequence>
+            <element name="Amount" type="string"/>
+            <element name="Units" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="CostRate">
+        <sequence>
+            <element minOccurs="0" name="Denominator" type="cmts:Duration"/>
+            <element minOccurs="0" name="Numerator" type="cmts:Money"/>
+        </sequence>
+    </complexType>
+    <complexType name="Duration">
+        <sequence>
+            <element minOccurs="0" name="Units" type="string"/>
+            <element minOccurs="0" name="Amount" type="decimal"/>
+        </sequence>
+    </complexType>
+    <complexType name="OrganizationIdentification">
+        <sequence>
+            <element minOccurs="0" name="Identification"/>
+        </sequence>
+    </complexType>
+    <complexType name="CompanyRegistration">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="TaxIdentification">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="OrganizationName">
+        <sequence>
+            <element minOccurs="0" name="OrganizationName" type="string"/>
+            <element minOccurs="0" name="TradingName" type="string"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="NameType" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentMethodSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="PaymentMethodName" type="string"/>
+            <element name="PaymentDescription" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="UserCredential">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Type" type="string"/>
+            <element minOccurs="0" name="UserId" type="string"/>
+            <element minOccurs="0" name="UserAccountController" type="string"/>
+            <element minOccurs="0" name="PlaceOfBirth" type="string"/>
+            <element minOccurs="0" name="UserCredentialCategory" type="string"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="AdminStatus" type="string"/>
+            <element minOccurs="0" name="UsageType" type="string"/>
+            <element minOccurs="0" name="Password" type="string"/>
+            <element minOccurs="0" name="ServiceProvider" type="string"/>
+            <element minOccurs="0" name="ServiceProviderName" type="string"/>
+            <element minOccurs="0" name="ServiceProviderData" type="string"/>
+            <element minOccurs="0" name="Characteristics">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Characteristic" type="cmts:Characteristic"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="Characteristic">
+        <sequence>
+            <element minOccurs="0" name="CharacteristicId" type="string"/>
+            <element minOccurs="0" name="CharacteristicName" type="string"/>
+            <element minOccurs="0" name="CharacteristicDescription" type="string"/>
+            <element minOccurs="0" name="Unique" type="boolean"/>
+            <element minOccurs="0" name="ValueType" type="string"/>
+            <element minOccurs="0" name="MinCardinality" type="int"/>
+            <element minOccurs="0" name="MaxCardinality" type="int"/>
+            <element minOccurs="0" name="Extensible" type="boolean"/>
+            <element minOccurs="0" name="DerivationFormula" type="string"/>
+            <element minOccurs="0" name="CharacteristicSequence" type="int"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="CharacteristicCategory" type="cmts:CharacteristicCategory"/>
+            <element minOccurs="0" name="Value">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="CharacteristicValue" type="cmts:CharacteristicValue"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="CharacteristicCategory">
+        <sequence>
+            <element minOccurs="0" name="CharacteristicCategoryId" type="string"/>
+            <element minOccurs="0" name="CategoryName" type="string"/>
+            <element minOccurs="0" name="CategoryDescription" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="CharacteristicValue">
+        <sequence>
+            <element minOccurs="0" name="Value" type="string"/>
+            <element minOccurs="0" name="UnitOfMeasure" type="string"/>
+            <element minOccurs="0" name="ValueType" type="string"/>
+            <element minOccurs="0" name="IsDefaultValue" type="boolean"/>
+            <element minOccurs="0" name="ValueFrom" type="string"/>
+            <element minOccurs="0" name="ValueTo" type="string"/>
+            <element minOccurs="0" name="RangeInterval" type="string"/>
+            <element minOccurs="0" name="ValueSequence" type="int"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="OrganizationSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Type" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Account">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="AccountNumber" type="string"/>
+            <element name="Name" type="string"/>
+            <element name="Type" type="string"/>
+            <element name="Pin" type="int"/>
+            <element name="Status" type="string"/>
+            <element name="FinancialStatus" type="string"/>
+            <element name="CreditLimit" type="int"/>
+            <element name="Customer" type="cmts:CustomerSummary"/>
+            <element name="ServiceAddress" type="cmts:PropertyAddress"/>
+            <element name="PrimaryUser" type="cmts:UserSummary"/>
+            <element name="Users">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UserSummary" type="cmts:UserSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Financials" type="cmts:FinancialSummary"/>
+            <element name="Billing" type="cmts:BillingSummary"/>
+            <element name="Payments" type="cmts:PaymentSummary"/>
+            <element name="Products">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ProductSummary" type="cmts:ProductSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Devices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="DeviceSummary" type="cmts:DeviceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="TaxExemptions" type="cmts:TaxExemptions"/>
+            <element name="Sites">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="SiteSummary" type="cmts:SiteSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Preferences">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PreferenceSummary" type="cmts:PreferenceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="RelatedAccounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="cmts:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="AppliedCustomerBillingVideoUsageRate">
+        <sequence>
+            <element minOccurs="0" name="IsAdultContent" type="boolean"/>
+            <element minOccurs="0" name="VideoUsageType" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerBillSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="BillNo" type="string"/>
+            <element minOccurs="0" name="BillAmount" type="cmts:Money"/>
+            <element minOccurs="0" name="BillDate" type="dateTime"/>
+            <element minOccurs="0" name="PaymentDueDate" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="ExtendedProperty">
+        <sequence>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Value" type="string"/>
+            <element minOccurs="0" name="SequenceNumber" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AppliedCustomerBillingAdjustment">
+        <sequence>
+            <element minOccurs="0" name="AdjustmentFromDate" type="dateTime"/>
+            <element minOccurs="0" name="AdjustmentThroughDate" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="AppliedCustomerBillingRefund">
+        <sequence>
+            <element minOccurs="0" name="RefundType" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="OneTimeAppliedCustomerBillingProductCharge">
+        <sequence>
+            <element minOccurs="0" name="OneTimeChargeType" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="RecurringAppliedCustomerBillingProductCharge">
+        <sequence>
+            <element minOccurs="0" name="RecurringChargeFromDate" type="dateTime"/>
+            <element minOccurs="0" name="RecurringChargeThroughDate" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="AppliedCustomerBillingRateSpec">
+        <sequence/>
+    </complexType>
+    <complexType name="AppliedCustomerBillingTaxRate">
+        <sequence>
+            <element minOccurs="0" name="CustomerTaxId" type="string"/>
+            <element minOccurs="0" name="TaxType" type="string"/>
+            <element minOccurs="0" name="TaxCategory" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AppliedCustomerBillingTelephoneUsageRate">
+        <sequence>
+            <element minOccurs="0" name="CalledNumber" type="string"/>
+            <element minOccurs="0" name="CallingNumber" type="string"/>
+            <element minOccurs="0" name="CallDuration" type="string"/>
+            <element minOccurs="0" name="AppliedRate" type="string"/>
+            <element minOccurs="0" name="TelephoneUsageType" type="string"/>
+            <element minOccurs="0" name="CallDestination" type="string"/>
+            <element minOccurs="0" name="CallDate" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="BillChargeSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="CreationDate" type="dateTime"/>
+            <element minOccurs="0" name="RateAmount" type="cmts:Money"/>
+            <element minOccurs="0" name="RateDescription" type="string"/>
+            <element minOccurs="0" name="BillingRateCode" type="string"/>
+            <element minOccurs="0" name="Account" type="cmts:AccountSummary"/>
+            <element minOccurs="0" name="CustomerBill" type="cmts:CustomerBillSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerBillSpecSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Format">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="CustomerBillFormat" type="cmts:CustomerBillFormat"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerBillFormat">
+        <sequence>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="PresentationMedia">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="CustomerBillPresentationMedia" type="cmts:CustomerBillPresentationMedia"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerBillPresentationMedia">
+        <sequence>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Document">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="DocumentLocation" type="string"/>
+            <element minOccurs="0" name="DocumentNumber" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="FinancialCharge">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerBillingCycleSpecification">
+        <sequence>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="BillingDateShift" type="int"/>
+            <element minOccurs="0" name="ChargeDateOffset" type="int"/>
+            <element minOccurs="0" name="CreditDateOffset" type="int"/>
+            <element minOccurs="0" name="MailingDateOffset" type="int"/>
+            <element minOccurs="0" name="PaymentDueDateOffset" type="int"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="CustomerBillSpecs">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="CustomerBillSpecSummary" type="cmts:CustomerBillSpecSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="BillingPeriod" type="cmts:BillingPeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="BillingPeriod">
+        <sequence>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Customer">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Profile" type="cmts:PartySummary"/>
+            <element minOccurs="0" name="CustomerId" type="string"/>
+            <element minOccurs="0" name="CustomerRank" type="string"/>
+            <element minOccurs="0" name="CustomerSegment" type="cmts:CustomerSegment"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="ContactPhones">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TelephoneNumber" type="cmts:TelephoneNumber"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ContactEmails">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EmailContact" type="cmts:EmailContact"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Accounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="cmts:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerQuoteItem">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="NonRecurringCost" type="cmts:Money"/>
+            <element name="RecurringCost" type="cmts:CostRate"/>
+            <element name="Action" type="string"/>
+            <element name="InteractionItemStatus" type="string"/>
+            <element name="Quantity" type="cmts:Quantity"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerQuoteSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="InteractionDate" type="dateTime"/>
+            <element minOccurs="0" name="InteractionDateComplete" type="dateTime"/>
+        </sequence>
+    </complexType>
+    <complexType name="OrderItem">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Action" type="string"/>
+            <element minOccurs="0" name="Status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="NEW"/>
+                        <enumeration value="PRESALES"/>
+                        <enumeration value="POSTSALES"/>
+                        <enumeration value="PROVISIONING"/>
+                        <enumeration value="ACTIVATION"/>
+                        <enumeration value="CANCELED"/>
+                        <enumeration value="COMPLETED"/>
+                        <enumeration value="WAITING_ON_EXTERNAL_ACTION"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Quantity" type="cmts:Quantity"/>
+            <element minOccurs="0" name="Product" type="cmts:OrderProduct"/>
+            <element minOccurs="0" name="ExistingSite" type="cmts:SiteSummary"/>
+            <element minOccurs="0" name="NewSite" type="cmts:SiteSummary"/>
+            <element minOccurs="0" name="Device" type="cmts:DeviceSummary"/>
+            <element minOccurs="0" name="StateTransitions">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Link" type="cmts:Link"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="OrderProduct">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Type" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="IsBundle" type="boolean"/>
+            <element minOccurs="0" name="Configuration"/>
+        </sequence>
+    </complexType>
+    <complexType name="EVCConfiguration">
+        <sequence>
+            <element name="ConfigText" type="string"/>
+            <element name="ConfigBinary" type="decimal"/>
+            <element name="ConfigLocation" type="cmts:Link"/>
+            <element name="ConfigActivationType" type="string"/>
+            <element name="IsColorBlind" type="boolean"/>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+        </sequence>
+    </complexType>
+    <complexType name="EPLConfiguration">
+        <sequence>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+            <element name="A_Address" type="cmts:Site"/>
+            <element name="Z_Address" type="cmts:Site"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIConfiguration">
+        <sequence>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+            <element name="Address" type="cmts:Site"/>
+        </sequence>
+    </complexType>
+    <complexType name="GenericConfiguration">
+        <sequence>
+            <element name="Unique" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Resources">
+        <sequence>
+            <element minOccurs="0" name="EthernetInterfaceDeltas">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EthernetInterfaceDeltas" type="cmts:EthernetInterfaceDeltas"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ResourcePortDeltas">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PortDeltas" type="cmts:PortDeltas"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="EthernetInterfaceDeltas">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="EthernetInterfaceConfiguration" type="cmts:EthernetInterfaceConfiguration"/>
+            <element minOccurs="0" name="Changes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Changes" type="cmts:Changes"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="EthernetInterfaceConfiguration">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="CustomerInterfaceNumber" type="decimal"/>
+            <element minOccurs="0" name="DeviceConfigMethod" type="string"/>
+            <element minOccurs="0" name="HasCarrierDetect" type="boolean"/>
+            <element minOccurs="0" name="HasDataLink" type="boolean"/>
+            <element minOccurs="0" name="IsInterfaceEnabled" type="boolean"/>
+            <element minOccurs="0" name="VendorInterfaceNumber" type="decimal"/>
+            <element minOccurs="0" name="InterfaceInitResetCount" type="decimal"/>
+            <element minOccurs="0" name="SyncLostCount" type="decimal"/>
+            <element minOccurs="0" name="EthernetInterface"/>
+        </sequence>
+    </complexType>
+    <complexType name="EthernetInterfaceSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="CustomerInterfaceNumber" type="int"/>
+            <element minOccurs="0" name="DeviceConfigMethod" type="string"/>
+            <element minOccurs="0" name="PhysicalPort" type="cmts:PhysicalPort"/>
+            <element minOccurs="0" name="MacAddress" type="cmts:MACAddress"/>
+        </sequence>
+    </complexType>
+    <complexType name="PhysicalPort">
+        <sequence>
+            <element minOccurs="0" name="DuplexMode" type="int"/>
+            <element minOccurs="0" name="PortNumber" type="int"/>
+            <element name="TypeOfPort" type="int"/>
+            <element minOccurs="0" name="VendorPortName" type="string"/>
+            <element name="IfType" type="int"/>
+            <element minOccurs="0" name="Card" type="cmts:CardSummary"/>
+            <element minOccurs="0" name="Configuration" type="cmts:PhysicalPortConfig"/>
+        </sequence>
+    </complexType>
+    <complexType name="CardSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="CardType" type="string"/>
+            <element minOccurs="0" name="CardMemorySize" type="decimal"/>
+            <element minOccurs="0" name="NumberOfPorts" type="int"/>
+        </sequence>
+    </complexType>
+    <complexType name="PhysicalPortConfig">
+        <sequence>
+            <element minOccurs="0" name="PhysicalMediaType" type="decimal"/>
+            <element minOccurs="0" name="MaxSpeed" type="cmts:Quantity"/>
+            <element minOccurs="0" name="DuplexMode" type="decimal"/>
+            <element minOccurs="0" name="MgmtInfoValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="RetrievalMethodCurrent" type="decimal"/>
+            <element minOccurs="0" name="RetrievalMethodsSupported" type="decimal"/>
+            <element minOccurs="0" name="ConfigText" type="string"/>
+            <element minOccurs="0" name="ConfigBinary">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="item" type="decimal"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ConfigLocation" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="MACAddress">
+        <sequence>
+            <element minOccurs="0" name="MacAddress" type="string"/>
+            <element minOccurs="0" name="Hostname" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Changes">
+        <sequence>
+            <element minOccurs="0" name="Change" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="PortDeltas">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Changes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Changes" type="cmts:Changes"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ResourcePortConfiguration" type="cmts:PortConfiguration"/>
+            <element minOccurs="0" name="CurrentPort" type="cmts:Port"/>
+        </sequence>
+    </complexType>
+    <complexType name="PortConfiguration">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Port">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="IsEdgePort" type="boolean"/>
+            <element minOccurs="0" name="UsageState" type="decimal"/>
+            <element minOccurs="0" name="CrcStatus" type="decimal"/>
+            <element minOccurs="0" name="PhysicalPort" type="cmts:PhysicalPort"/>
+        </sequence>
+    </complexType>
+    <complexType name="Services">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="UniServiceDeltas">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UNIServiceDeltas" type="cmts:UNIServiceDeltas"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="EvcServiceDeltas">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EVCServiceDeltas" type="cmts:EVCServiceDeltas"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Changes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Changes" type="cmts:Changes"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="UNIServiceDeltas">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Changes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Changes" type="cmts:Changes"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="UniServiceConfiguration" type="cmts:UNIServiceConfigurationSummary"/>
+            <element minOccurs="0" name="CurrentUniService" type="cmts:UNIServiceSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIServiceConfigurationSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="HasStarted" type="boolean"/>
+            <element minOccurs="0" name="IsServiceEnabled" type="boolean"/>
+            <element minOccurs="0" name="IsMandatory" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIServiceSummary">
+        <sequence/>
+    </complexType>
+    <complexType name="EVCServiceDeltas">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="UniServiceConfiguration" type="cmts:EVCServiceConfiguration"/>
+            <element minOccurs="0" name="Changes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Changes" type="cmts:Changes"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="EVCServiceConfiguration">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="HasStarted" type="boolean"/>
+            <element name="IsServiceEnabled" type="boolean"/>
+            <element name="IsMandatory" type="boolean"/>
+            <element name="StartMode" type="int"/>
+            <element name="IsStateful" type="boolean"/>
+            <element name="IsFCCReportable" type="boolean"/>
+            <element name="IsTSP" type="boolean"/>
+            <element name="IsResourceFacingService" type="boolean"/>
+            <element name="IsCustomerFacingService" type="boolean"/>
+            <element name="RfsStatus" type="int"/>
+            <element name="CfsStatus" type="int"/>
+            <element name="CustomerFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EVCServiceConfigurationSummary" type="cmts:EVCServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ResourceFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EVCServiceConfigurationSummary" type="cmts:EVCServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Unis">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UNIServiceConfigurationSummary" type="cmts:UNIServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Configuration" type="cmts:EVCConfiguration"/>
+            <element name="Path" type="cmts:NetworkPath"/>
+            <element name="Service" type="cmts:EVCService"/>
+        </sequence>
+    </complexType>
+    <complexType name="ConfigurationData">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="MgmtInfoValidFor" type="cmts:TimePeriod"/>
+            <element name="RetrievalMethodCurrent" type="int"/>
+            <element name="RetrievalMethodsSupported" type="string"/>
+            <element name="ConfigText" type="string"/>
+            <element name="ConfigBinary" type="int"/>
+            <element name="ConfigLocation" type="cmts:Link"/>
+            <element name="Service" type="cmts:ServiceSummary"/>
+            <element name="Resources">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ResourceSummary" type="cmts:ResourceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ServiceConfiguration" type="cmts:ServiceConfigurationSummary"/>
+            <element name="Attributes">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AttributeValuePair" type="cmts:AttributeValuePair"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Specification" type="cmts:ConfigurationDataSpecification"/>
+        </sequence>
+    </complexType>
+    <complexType name="AttributeValuePair">
+        <sequence>
+            <element name="AttributeName" type="string"/>
+            <element name="AttributeValue" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="ResourceSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="ImpactedItem">
+        <sequence>
+            <element name="Type" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="Ticket" type="cmts:TicketSummary"/>
+            <element name="Accounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="cmts:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Services">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSummary" type="cmts:ServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Resources">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ResourceSummary" type="cmts:ResourceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="Preference">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="PreferenceName" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="Value" type="string"/>
+            <element name="UnitOfMeasure" type="string"/>
+            <element name="RangeInterval" type="string"/>
+            <element name="SpecCharacteristicName" type="string"/>
+            <element name="SpecCharacteristicDescription" type="string"/>
+            <element name="ValueType" type="string"/>
+            <element name="CharacteristicSequence" type="int"/>
+            <element name="IsSet" type="boolean"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+            <element name="Preferences">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PreferenceSummary" type="cmts:PreferenceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="PreferenceCategory" type="cmts:PreferenceCategory"/>
+        </sequence>
+    </complexType>
+    <complexType name="TicketSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Type">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Master"/>
+                        <enumeration value="Primary"/>
+                        <enumeration value="Subtask"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="DetailDescription" type="string"/>
+            <element minOccurs="0" name="Severity" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceSpecificationSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Description" type="string"/>
+            <element name="CommonName" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductProperties">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Service" type="cmts:ServiceSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceConfigurationSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="HasStarted" type="boolean"/>
+            <element minOccurs="0" name="IsServiceEnabled" type="boolean"/>
+            <element minOccurs="0" name="IsMandatory" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="ConfigurationDataSpecification">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Description" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="NetworkPath">
+        <sequence>
+            <element name="AlternatePathIdentifier" type="string"/>
+            <element name="NoOfChannels" type="decimal"/>
+            <element name="Topology" type="string"/>
+            <element name="Signaling" type="string"/>
+            <element name="Direction" type="string"/>
+            <element name="ChannelType" type="string"/>
+            <element name="Framing" type="string"/>
+            <element name="TerminationPoints">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TerminationPoint" type="cmts:TerminationPoint"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="TerminationPoint">
+        <sequence>
+            <element name="Direction" type="string"/>
+            <element name="VendorTPName" type="string"/>
+            <element name="TypeOfTP" type="string"/>
+            <element name="EndPointLabel" type="string"/>
+            <element name="SideType" type="string"/>
+            <element name="EthernetInterface" type="cmts:EthernetInterfaceSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="EVCServiceSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="HasStarted" type="boolean"/>
+            <element minOccurs="0" name="IsServiceEnabled" type="boolean"/>
+            <element minOccurs="0" name="IsMandatory" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="ResourceConfiguration">
+        <sequence>
+            <element name="Resources">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceConfigurationSummary" type="cmts:ServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="EVCService">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="HasStarted" type="boolean"/>
+            <element name="IsServiceEnabled" type="boolean"/>
+            <element name="IsMandatory" type="boolean"/>
+            <element name="StartMode" type="decimal"/>
+            <element name="IsStateful" type="boolean"/>
+            <element name="IsFCCReportable" type="boolean"/>
+            <element name="IsTSP" type="boolean"/>
+            <element name="IsResourceFacingService" type="boolean"/>
+            <element name="IsCustomerFacingService" type="boolean"/>
+            <element name="RfsStatus" type="decimal"/>
+            <element name="CfsStatus" type="decimal"/>
+            <element name="CustomerFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EVCServiceSummary" type="cmts:EVCServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ResourceFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EVCServiceSummary" type="cmts:EVCServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Unis">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UNIServiceSummary" type="cmts:UNIServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Configuration" type="cmts:EVCConfiguration"/>
+            <element name="Path" type="cmts:NetworkPath"/>
+        </sequence>
+    </complexType>
+    <complexType name="EVCServiceConfigurationSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="HasStarted" type="boolean"/>
+            <element minOccurs="0" name="IsServiceEnabled" type="boolean"/>
+            <element minOccurs="0" name="IsMandatory" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIConfig">
+        <sequence>
+            <element name="ConfigText" type="string"/>
+            <element name="ConfigBinary">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="item" type="decimal"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ConfigLocation" type="cmts:Link"/>
+            <element name="ConfigActivationType" type="string"/>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+            <element name="DuplexMode" type="int"/>
+            <element name="MacLayer" type="int"/>
+            <element name="IsColorBlind" type="boolean"/>
+            <element name="IsServiceMultiplexed" type="boolean"/>
+            <element name="VlanTagging" type="int"/>
+            <element name="MtuSize" type="int"/>
+        </sequence>
+    </complexType>
+    <complexType name="EvcSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNISummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="HasStarted" type="boolean"/>
+            <element name="IsServiceEnabled" type="boolean"/>
+            <element name="IsMandatory" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIService">
+        <sequence/>
+    </complexType>
+    <complexType name="ServiceSpecification">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Description" type="string"/>
+            <element name="CommonName" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+            <element name="IsCustomerFacing" type="boolean"/>
+            <element name="IsResourceFacing" type="boolean"/>
+            <element name="IsComposedOf">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSpecification" type="cmts:ServiceSpecification"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="CustomerFacingServiceSpec">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSpecification" type="cmts:ServiceSpecification"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ResourceFacingServiceSpec">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSpecification" type="cmts:ServiceSpecification"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Services">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSummary" type="cmts:ServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Characteristics">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Characteristic" type="cmts:Characteristic"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ServiceSpecificationTypes" type="cmts:ServiceSpecificationType"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceSpecificationType">
+        <sequence>
+            <element name="ServiceSpecTypeName" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="OrderDesign">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="Timestamp" type="dateTime"/>
+            <element minOccurs="0" name="DesignArtifact" type="cmts:Link"/>
+            <element minOccurs="0" name="ServiceDesign" type="cmts:Services"/>
+            <element minOccurs="0" name="ResourceDesign" type="cmts:Resources"/>
+        </sequence>
+    </complexType>
+    <complexType name="Location">
+        <sequence>
+            <element minOccurs="0" name="Site" type="cmts:Site"/>
+            <element minOccurs="0" name="PropertyAddress" type="cmts:PropertyAddress"/>
+        </sequence>
+    </complexType>
+    <complexType name="Site">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Type">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="ServiceSite"/>
+                        <enumeration value="ProviderSite"/>
+                        <enumeration value="Other"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="MultiTenant" type="boolean"/>
+            <element minOccurs="0" name="SiteHours" type="string"/>
+            <element minOccurs="0" name="StructureHeight" type="cmts:Quantity"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Active"/>
+                        <enumeration value="Off"/>
+                        <enumeration value="Pending"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="ClliCode" type="string"/>
+            <element minOccurs="0" name="Category" type="cmts:SiteCategory"/>
+            <element minOccurs="0" name="VhCoordinates" type="cmts:VHCoordinates"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="AccountContacts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountContactAssignment" type="cmts:AccountContactAssignment"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Accounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="cmts:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="PropertyAddress" type="cmts:PropertyAddress"/>
+            <element minOccurs="0" name="GeographicLocations">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="GeographicLocation" type="cmts:GeographicLocation"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="AccountContactAssignment">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="SiteCategory">
+        <sequence>
+            <element minOccurs="0" name="CategoryDescription" type="string"/>
+            <element minOccurs="0" name="CategoryName" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="VHCoordinates">
+        <sequence>
+            <element minOccurs="0" name="HorizontalCoordinate" type="string"/>
+            <element minOccurs="0" name="VerticalCoordinate" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceOrderItem">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Action" type="string"/>
+            <element minOccurs="0" name="Quantity" type="cmts:Quantity"/>
+            <element minOccurs="0" name="InteractionItemStatus" type="string"/>
+            <element minOccurs="0" name="Locations">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Location" type="cmts:Location"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ServiceConfiguration" type="cmts:ServiceConfigurationSummary"/>
+            <element minOccurs="0" name="Device" type="cmts:DeviceSummary"/>
+            <element minOccurs="0" name="EvcServiceConfiguration" type="cmts:EVCServiceConfigurationSummary"/>
+            <element minOccurs="0" name="UniServiceConfigurations">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UNIServiceConfigurationSummary" type="cmts:UNIServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="OrderDesign" type="cmts:OrderDesign"/>
+        </sequence>
+    </complexType>
+    <complexType name="AsBuiltOrderDesign">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="Timestamp" type="dateTime"/>
+            <element minOccurs="0" name="FullAsBuiltNetwork" type="cmts:Link"/>
+            <element minOccurs="0" name="EvcService" type="cmts:EVCServiceSummary"/>
+            <element minOccurs="0" name="UniServices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UNIServiceSummary" type="cmts:UNIServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="SAT">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Pass" type="boolean"/>
+            <element minOccurs="0" name="Throughput" type="cmts:Quantity"/>
+            <element minOccurs="0" name="Frameloss" type="cmts:Quantity"/>
+            <element minOccurs="0" name="Latency" type="cmts:Quantity"/>
+            <element minOccurs="0" name="Systemreset" type="boolean"/>
+            <element minOccurs="0" name="Systemrecover" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="GeographicLocation">
+        <sequence>
+            <element minOccurs="0" name="Accuracy" type="string"/>
+            <element minOccurs="0" name="Property" type="cmts:Property"/>
+            <element minOccurs="0" name="CableServiceArea" type="cmts:CableServiceArea"/>
+            <element minOccurs="0" name="ExchangeServiceArea" type="cmts:ExchangeServiceArea"/>
+            <element minOccurs="0" name="MarketArea" type="cmts:MarketArea"/>
+            <element minOccurs="0" name="GeographicArea" type="cmts:GeographicArea"/>
+            <element minOccurs="0" name="RateGroupRegion" type="cmts:RateGroupRegion"/>
+            <element minOccurs="0" name="RateCenter" type="cmts:RateCenter"/>
+            <element minOccurs="0" name="EmergencyServiceZone" type="cmts:EmergencyServiceZone"/>
+            <element minOccurs="0" name="TimeZoneRegion" type="cmts:TimeZoneRegion"/>
+            <element minOccurs="0" name="AdministrativeArea" type="cmts:AdministrativeArea"/>
+            <element minOccurs="0" name="Geometry" type="cmts:Geometry"/>
+        </sequence>
+    </complexType>
+    <complexType name="CableServiceArea">
+        <sequence>
+            <element minOccurs="0" name="Accuracy" type="string"/>
+            <element minOccurs="0" name="Property" type="cmts:Property"/>
+            <element minOccurs="0" name="CableServiceArea" type="cmts:CableServiceArea"/>
+            <element minOccurs="0" name="ExchangeServiceArea" type="cmts:ExchangeServiceArea"/>
+            <element minOccurs="0" name="MarketArea" type="cmts:MarketArea"/>
+            <element minOccurs="0" name="GeographicArea" type="cmts:GeographicArea"/>
+            <element minOccurs="0" name="RateGroupRegion" type="cmts:RateGroupRegion"/>
+            <element minOccurs="0" name="RateCenter" type="cmts:RateCenter"/>
+            <element minOccurs="0" name="EmergencyServiceZone" type="cmts:EmergencyServiceZone"/>
+            <element minOccurs="0" name="TimeZoneRegion" type="cmts:TimeZoneRegion"/>
+            <element minOccurs="0" name="AdministrativeArea" type="cmts:AdministrativeArea"/>
+            <element minOccurs="0" name="Geometry" type="cmts:Geometry"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceRoleSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="CommonName" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AssignedGroup">
+        <sequence>
+            <element minOccurs="0" name="AssignedStart" type="dateTime"/>
+            <element minOccurs="0" name="AssignedEnd" type="dateTime"/>
+            <element minOccurs="0" name="UserGroups" type="cmts:UserGroup"/>
+        </sequence>
+    </complexType>
+    <complexType name="UserGroup">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="Users">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UserSummary" type="cmts:UserSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Organization" type="cmts:OrganizationSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="Comment">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="CreateTime" type="dateTime"/>
+            <element minOccurs="0" name="Visibility" type="string"/>
+            <element minOccurs="0" name="Submitter" type="cmts:UserSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="ExternalSystemReference">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Modifier">
+        <sequence>
+            <element minOccurs="0" name="ModifiedTime" type="dateTime"/>
+            <element minOccurs="0" name="User" type="cmts:UserSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="TicketRelationship">
+        <sequence>
+            <element minOccurs="0" name="RelationshipType" type="cmts:TicketRelationshipType"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="RelatedTicket" type="cmts:Ticket"/>
+            <element minOccurs="0" name="Tickets" type="cmts:Ticket"/>
+        </sequence>
+    </complexType>
+    <complexType name="TicketRelationshipType">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="Ticket">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Type">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Master"/>
+                        <enumeration value="Primary"/>
+                        <enumeration value="Subtask"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="DetailDescription" type="string"/>
+            <element minOccurs="0" name="Severity" type="string"/>
+            <element minOccurs="0" name="UniversalIdentifier" type="string"/>
+            <element minOccurs="0" name="OriginatingSystem" type="string"/>
+            <element minOccurs="0" name="OriginatingTicketId" type="string"/>
+            <element minOccurs="0" name="Impact" type="string"/>
+            <element minOccurs="0" name="InteractionStatus" type="string"/>
+            <element minOccurs="0" name="InteractionDate" type="dateTime"/>
+            <element minOccurs="0" name="InteractionDateComplete" type="dateTime"/>
+            <element minOccurs="0" name="CreateDate" type="dateTime"/>
+            <element minOccurs="0" name="RelatedTo">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TicketRelationship" type="cmts:TicketRelationship"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="PrimaryTicket" type="cmts:TicketSummary"/>
+            <element minOccurs="0" name="Tasks">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TicketSummary" type="cmts:TicketSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="AssignedGroup" type="cmts:AssignedGroup"/>
+            <element minOccurs="0" name="ExternalSystemReference">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ExternalSystemReference" type="cmts:ExternalSystemReference"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Category" type="cmts:Category"/>
+            <element minOccurs="0" name="Submitter" type="cmts:UserSummary"/>
+            <element minOccurs="0" name="Assignee" type="cmts:UserSummary"/>
+            <element minOccurs="0" name="Modifiers">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Modifier" type="cmts:Modifier"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Watchers">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Watcher" type="cmts:Watcher"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Comments">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Comment" type="cmts:Comment"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="StatusEntries">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="StatusEntry" type="cmts:StatusEntry"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Characteristics">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Characteristic" type="cmts:Characteristic"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Contacts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Contact" type="cmts:Contact"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="ImpactedItems">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ImpactedItem" type="cmts:ImpactedItem"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Location" type="cmts:TicketLocation"/>
+            <element minOccurs="0" name="RelatedFrom">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="TicketRelationship" type="cmts:TicketRelationship"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="StatusEntry">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="PriorState" type="string"/>
+            <element minOccurs="0" name="CurrentState" type="string"/>
+            <element minOccurs="0" name="Submitter" type="cmts:UserSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="Watcher">
+        <sequence>
+            <element minOccurs="0" name="WatchStart" type="dateTime"/>
+            <element minOccurs="0" name="WatchEnd" type="dateTime"/>
+            <element minOccurs="0" name="User" type="cmts:UserSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="Category">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="Description" type="string"/>
+            <element minOccurs="0" name="Type" type="string"/>
+            <element minOccurs="0" name="Value" type="string"/>
+            <element minOccurs="0" name="Level" type="string"/>
+            <element minOccurs="0" name="SubCategory" type="cmts:Category"/>
+        </sequence>
+    </complexType>
+    <complexType name="Contact">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="ContactType" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+            <element minOccurs="0" name="Status" type="string"/>
+            <element minOccurs="0" name="ValidFor" type="cmts:TimePeriod"/>
+            <element minOccurs="0" name="Individual" type="cmts:Individual"/>
+            <element minOccurs="0" name="ContactMediums" type="cmts:ContactMedium"/>
+            <element minOccurs="0" name="PartyDetails" type="cmts:PartySummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="TicketLocation">
+        <sequence>
+            <element minOccurs="0" name="Sites">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Site" type="cmts:Site"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="Unnamed_Ticket_" type="cmts:Ticket"/>
+            <element minOccurs="0" name="CableServiceArea" type="cmts:CableServiceArea"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="MarketArea" type="cmts:MarketArea"/>
+        </sequence>
+    </complexType>
+    <complexType name="MarketArea">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="MarketAreaName" type="string"/>
+            <element minOccurs="0" name="MarketAreaType" type="string"/>
+            <element minOccurs="0" name="MarketRank" type="int"/>
+            <element minOccurs="0" name="Geometry" type="cmts:Geometry"/>
+        </sequence>
+    </complexType>
+    <complexType name="CMTSCableModemAssignment">
+        <sequence>
+            <element name="CmStatus" type="int"/>
+            <element name="CmPreEqualized" type="boolean"/>
+            <element name="CableModem" type="cmts:CableModemSummary"/>
+            <element name="Cmts" type="cmts:CMTSSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="CableModemSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="MacAddress" type="cmts:MACAddress"/>
+            <element name="SerialNumber" type="string"/>
+            <element name="NumActiveChannels" type="int"/>
+        </sequence>
+    </complexType>
+    <complexType name="CMTSSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="CommonName" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="CableModemChannel">
+        <sequence>
+            <element name="Snr" type="cmts:Quantity"/>
+            <element name="ModulationType" type="int"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="WarnThresholdPercent" type="int"/>
+            <element name="OperationalState" type="int"/>
+            <element name="IsPreEqualized" type="boolean"/>
+            <element name="OverSubscription" type="string"/>
+            <element name="Id" type="string"/>
+            <element name="ModulationProfileNumber" type="int"/>
+            <element name="OriginalMteID" type="string"/>
+            <element name="LogicalAlarmStatus" type="int"/>
+            <element name="MteAdministrativeState" type="int"/>
+            <element name="BpsAvailable" type="int"/>
+            <element name="MteID" type="string"/>
+            <element name="ChannelWidthHz" type="decimal"/>
+            <element name="ModulationChannelType" type="int"/>
+            <element name="AdditionalInfo" type="string"/>
+            <element name="IsMTEOperational" type="boolean"/>
+            <element name="TransmitOffset" type="int"/>
+            <element name="BpsAssigned" type="int"/>
+            <element name="TransmitPower" type="cmts:Quantity"/>
+            <element name="LogicalAlarmReportingEnabled" type="boolean"/>
+            <element name="ChannelFrequencyHz" type="decimal"/>
+            <element name="TypeOfMTE" type="int"/>
+            <element name="ModulationConstellation" type="int"/>
+            <element name="ReceivePower" type="cmts:Quantity"/>
+        </sequence>
+    </complexType>
+    <complexType name="DOCSISCableInterface">
+        <sequence>
+            <element name="MtuSupported" type="int"/>
+            <element name="HasDataLink" type="boolean"/>
+            <element name="VendorInterfaceNumber" type="string"/>
+            <element name="LrStatus" type="int"/>
+            <element name="T3RangingResponseTimeouts" type="int"/>
+            <element name="MtuCurrent" type="int"/>
+            <element name="IsInterfaceEnabled" type="boolean"/>
+            <element name="NetworkPath">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="NetworkPath" type="cmts:NetworkPath"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="IsOperational" type="boolean"/>
+            <element name="CorrectedCodewordsIn" type="int"/>
+            <element name="CustomerInterfaceNumber" type="string"/>
+            <element name="T4RangingRequestWindowTimeouts" type="int"/>
+            <element name="UsageState" type="int"/>
+            <element name="InterfaceInitResetCount" type="int"/>
+            <element name="ServiceState" type="int"/>
+            <element name="SupportsMLPPP" type="boolean"/>
+            <element name="BadCodewordsIn" type="int"/>
+            <element name="HasCarrierDetect" type="boolean"/>
+            <element name="SyncLostCount" type="int"/>
+            <element name="GoodCodewordsIn" type="int"/>
+            <element name="DeviceConfigMethod" type="int"/>
+        </sequence>
+    </complexType>
+    <complexType name="FiberNode">
+        <sequence/>
+    </complexType>
+    <complexType name="IpAddress">
+        <sequence>
+            <element name="Address" type="string"/>
+            <element name="Version" type="string"/>
+            <element name="Type" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Slot">
+        <sequence>
+            <element name="HasAdapter" type="boolean"/>
+            <element name="SlotNumber" type="int"/>
+            <element name="SlotPurpose" type="int"/>
+            <element name="PurposeDescription" type="string"/>
+            <element name="Card" type="cmts:CardSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="CLLICode">
+        <sequence/>
+    </complexType>
+    <complexType name="ProductLineOfBusiness">
+        <sequence/>
+    </complexType>
+    <complexType name="DeviceManagementType">
+        <sequence/>
+    </complexType>
+    <complexType name="DeviceProviderType">
+        <sequence/>
+    </complexType>
+    <complexType name="DeviceActivationStatus">
+        <sequence/>
+    </complexType>
+    <complexType name="Device">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Description" type="string"/>
+            <element name="Name" type="string"/>
+            <element name="Type" type="string"/>
+            <element name="Version" type="string"/>
+            <element name="ManagementMethodCurrent" type="decimal"/>
+            <element name="ManagementMethodSupported" type="decimal"/>
+            <element name="UsageState" type="decimal"/>
+            <element name="MacAddress" type="string"/>
+            <element name="ClliCode" type="string"/>
+            <element name="ManufactureDateStamp" type="string"/>
+            <element name="OtherIdentifier" type="string"/>
+            <element name="PowerState" type="decimal"/>
+            <element name="SerialNumber" type="string"/>
+            <element name="VersionNumber" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+            <element name="HostName" type="string"/>
+            <element name="OwnedBy" type="cmts:Customer"/>
+            <element name="Characteristics">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Characteristic" type="cmts:Characteristic"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Slot" type="cmts:Slot"/>
+            <element name="IpAddressSummary">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="IpAddress" type="cmts:IpAddress"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="ContactSummary">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+            <element minOccurs="0" name="ContactType" type="string"/>
+            <element minOccurs="0" name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductOfferingSummary">
+        <sequence/>
+    </complexType>
+    <complexType name="Price">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="Charges">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Charge" type="cmts:Charge"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="ProductSpecificationSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="ProductNumber" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="LifecycleStatus" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductRelationship">
+        <sequence>
+            <element name="RelationshipType" type="string"/>
+            <element name="Product" type="cmts:ProductSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="EntitlementGrant">
+        <sequence>
+            <element name="GrantId" type="string"/>
+            <element name="Name" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+            <element name="Token" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Charge">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="Price" type="cmts:Money"/>
+            <element name="PriceType" type="string"/>
+            <element name="Quantity" type="cmts:Quantity"/>
+            <element name="Period" type="string"/>
+            <element name="Alterations">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Alteration" type="cmts:Alteration"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="Alteration">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="Price" type="cmts:Money"/>
+            <element name="PriceType" type="string"/>
+            <element name="Quantity" type="cmts:Quantity"/>
+            <element name="Period" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductSpecificationType">
+        <sequence>
+            <element name="Description" type="string"/>
+            <element name="Name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="UNIProductConfiguration">
+        <sequence>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+            <element name="Address" type="cmts:Site"/>
+        </sequence>
+    </complexType>
+    <complexType name="Product">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+            <element name="Description" type="string"/>
+            <element name="ProductStatus" type="string"/>
+            <element name="ProductSerialNumber" type="string"/>
+            <element name="ProductPrices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="Price" type="cmts:Price"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="RelatedProducts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ProductRelationship" type="cmts:ProductRelationship"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ProductSpecification" type="cmts:ProductSpecificationSummary"/>
+            <element name="ProductOffering" type="cmts:ProductOfferingSummary"/>
+            <element name="Services">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceSummary" type="cmts:ServiceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Devices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="DeviceSummary" type="cmts:DeviceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="CurrentLocation" type="cmts:SiteSummary"/>
+            <element name="LocationHistory">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="SiteSummary" type="cmts:SiteSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Documentation" type="cmts:Document"/>
+            <element name="Entitlements">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="EntitlementGrant" type="cmts:EntitlementGrant"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="ProductConfigurationSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+        </sequence>
+    </complexType>
+    <complexType name="ServiceConfiguration">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="HasStarted" type="boolean"/>
+            <element name="IsServiceEnabled" type="boolean"/>
+            <element name="IsMandatory" type="boolean"/>
+            <element name="StartMode" type="int"/>
+            <element name="IsStateful" type="boolean"/>
+            <element name="IsFCCReportable" type="boolean"/>
+            <element name="IsTSP" type="boolean"/>
+            <element name="IsResourceFacingService" type="boolean"/>
+            <element name="IsCustomerFacingService" type="boolean"/>
+            <element name="RfsStatus" type="int"/>
+            <element name="CfsStatus" type="int"/>
+            <element name="CustomerFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceConfigurationSummary" type="cmts:ServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ResourceFacingService">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ServiceConfigurationSummary" type="cmts:ServiceConfigurationSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Service" type="cmts:ServiceSummary"/>
+            <element name="ConfigurationDatas">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ConfigurationData" type="cmts:ConfigurationData"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="ResourceFacingServices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ResourceConfiguration" type="cmts:ResourceConfiguration"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="EVCProductSummary">
+        <sequence/>
+    </complexType>
+    <complexType name="UNIProductSummary">
+        <sequence/>
+    </complexType>
+    <complexType name="EVCProductConfiguration">
+        <sequence>
+            <element name="Bandwidth" type="cmts:Quantity"/>
+            <element name="A_Address" type="cmts:Site"/>
+            <element name="Z_Address" type="cmts:Site"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductPriceSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="Description" type="string"/>
+            <element name="ValidFor" type="cmts:TimePeriod"/>
+        </sequence>
+    </complexType>
+    <complexType name="EPLProductSummary">
+        <sequence>
+            <element name="Id" type="string"/>
+            <element name="link" type="cmts:Link"/>
+            <element name="Name" type="string"/>
+            <element name="IsBundle" type="boolean"/>
+            <element name="Description" type="string"/>
+            <element name="ProductStatus" type="string"/>
+            <element name="ProductSerialNumber" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AccountProductAssignment">
+        <sequence>
+            <element name="InvolventType" type="string"/>
+            <element name="Account" type="cmts:AccountSummary"/>
+            <element name="Product" type="cmts:ProductSummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="ExchangeServiceArea">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="GeographicArea">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="RateGroupRegion">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="RateCenter">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="EmergencyServiceZone">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="TimeZoneRegion">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="AdministrativeArea">
+        <sequence>
+            <element minOccurs="0" name="Id" type="string"/>
+            <element minOccurs="0" name="link" type="cmts:Link"/>
+        </sequence>
+    </complexType>
+</schema>

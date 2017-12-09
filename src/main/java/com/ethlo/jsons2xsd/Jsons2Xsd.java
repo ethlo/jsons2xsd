@@ -5,20 +5,19 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
+import org.assertj.core.util.Lists;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,9 +37,12 @@ public class Jsons2Xsd
     public static final String TYPE_ARRAY = "array";
     public static final String TYPE_REFERENCE = "reference";
     public static final String TYPE_BOOLEAN = "boolean";
+    public static final String TYPE_DECIMAL = "decimal";
+    public static final String TYPE_ENUM = "enum";
     
-    public static final String JS_PROPERTIES = "properties";
-    public static final String JS_REQUIRED = "required";
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_PROPERTIES = "properties";
+    public static final String FIELD_REQUIRED = "required";
     
     public static final String XSD_ATTRIBUTE = "attribute";
     public static final String XSD_ELEMENT = "element";
@@ -56,7 +58,7 @@ public class Jsons2Xsd
         typeMapping.put(TYPE_STRING, TYPE_STRING);
         typeMapping.put(TYPE_OBJECT, TYPE_OBJECT);
         typeMapping.put(TYPE_ARRAY, TYPE_ARRAY);
-        typeMapping.put("number", "decimal");
+        typeMapping.put("number", TYPE_DECIMAL);
         typeMapping.put(TYPE_BOOLEAN, TYPE_BOOLEAN);
         typeMapping.put("integer", "int");
 
@@ -79,160 +81,38 @@ public class Jsons2Xsd
         typeMapping.put("string|style", TYPE_STRING);
     }
     
-    public static Document convert(Reader jsonSchema, Reader definitionSchema, Config cfg) throws JsonProcessingException, IOException
-    {
-        final Set<String> neededElements = new HashSet<>();
-
-        JsonNode rootNode = mapper.readTree(jsonSchema);
-
-        final Document xsdDoc = XmlUtil.newDocument();
-        xsdDoc.setXmlStandalone(true);
-
-        final Element schemaRoot = createXsdElement(xsdDoc, "schema");
-        schemaRoot.setAttribute("targetNamespace", cfg.getTargetNamespace());
-        schemaRoot.setAttribute("xmlns:" + cfg.getNsAlias(), cfg.getTargetNamespace());
-
-        schemaRoot.setAttribute("elementFormDefault", "qualified");
-        if (cfg.isAttributesQualified())
-        {
-            schemaRoot.setAttribute("attributeFormDefault", "qualified");
-        }
-
-        final String type = rootNode.path("type").textValue();
-        Assert.isTrue("object".equals(type), "root should have type=\"object\"");
-
-        final JsonNode properties = rootNode.get("properties");
-        Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
-
-        Element wrapper = schemaRoot;
-        if (cfg.getWrapping() == SchemaWrapping.ELEMENT)
-        {
-            wrapper = createXsdElement(schemaRoot, "element");
-            wrapper.setAttribute("name", cfg.getName());
-            wrapper.setAttribute("type", cfg.getNsAlias() + ":" + cfg.getName());
-
-        }
-
-        final Element schemaComplexType = createXsdElement(schemaRoot, "complexType");
-
-        schemaComplexType.setAttribute("name", cfg.getName());
-        final Element schemaSequence = createXsdElement(schemaComplexType, "sequence");
-
-        doIterate(neededElements, schemaSequence, properties, cfg.getNsAlias());
-
-        //find references in Defs
-        JsonNode definitionsRootNode = mapper.readTree(definitionSchema);
-
-        final JsonNode definitions = definitionsRootNode.path("definitions");
-        Assert.notNull(definitions, "\"definitions\"  should be found in root of JSON schema\"");
-        final Iterator<Entry<String, JsonNode>> fieldIter = definitions.fields();
-        while(fieldIter.hasNext())
-        {
-            final Entry<String, JsonNode> entry = fieldIter.next();
-            final String key = entry.getKey();
-            final JsonNode val = entry.getValue();
-            if (neededElements.contains(key)) {
-
-                final Element definitionComplexType = createXsdElement(schemaRoot, "complexType");
-                definitionComplexType.setAttribute("name", key);
-
-
-                final Element defSchemaSequence = createXsdElement(definitionComplexType, "sequence");
-                final JsonNode defProperties = val.get("properties");
-                Assert.notNull(defProperties, "\"properties\" property should be found in \"" + key + "\"");
-
-                doIterate(neededElements, defSchemaSequence, defProperties, cfg.getNsAlias());
-            }
-        }
-
-        return xsdDoc;
-    }
     
-    private static void doIterate(Set<String> neededElements, Element elem, JsonNode node, String ns)
-    {
-        final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
-        while(fieldIter.hasNext())
-        {
-            final Entry<String, JsonNode> entry = fieldIter.next();
-            final String key = entry.getKey();
-            final JsonNode val = entry.getValue();
-            doIterateSingle(neededElements, key, val, elem, ns);
-        }
-    }
-    
-    private static void doIterateSingle(Set<String> neededElements, String key, JsonNode val, Element elem, String ns)
-    {
-        final String xsdType = determineXsdType(key, val);
-        final boolean required = val.path("required").booleanValue();
-        final Element nodeElem = createXsdElement(elem, "element");
-        nodeElem.setAttribute("name", key);
-
-        if (! "object".equals(xsdType) && !"array".equals(xsdType))
-        {
-            // Simple type
-            nodeElem.setAttribute("type", xsdType);
-        }
-        
-        if (! required)
-        {
-            // Not required
-            nodeElem.setAttribute("minOccurs", "0");
-        }
-        
-        switch (xsdType)
-        {
-            case "array":
-                handleArray(neededElements, nodeElem, val, ns);
-                return;
-                
-            case "decimal":
-            case "int":
-                handleNumber(nodeElem, xsdType, val);
-                return;
-                
-            case "enum":
-                handleEnum(nodeElem, val);
-                return;
-                
-            case "object":
-                handleObject(neededElements, nodeElem, val, ns);
-                return;
-                
-            case "string":
-                handleString(nodeElem, val);
-                return;
-
-            case "reference":
-                handleReference(neededElements, nodeElem, val, ns);
-                return;
-        }
-    }
 
     public static Document convert(Reader jsonSchema, Config cfg) throws IOException
+    {
+        return convert(jsonSchema, null, cfg);
+    }
+    
+    public static Document convert(Reader jsonSchema, Reader definitionSchema, Config cfg) throws IOException
     {
         final JsonNode rootNode = mapper.readTree(jsonSchema);
         final String nsAlias = cfg.getNsAlias();
         final Element schemaRoot = createDocument(cfg);
         
-        final SortedSet<String> neededElements = new TreeSet<>();
+        final Set<String> neededElements = new LinkedHashSet<>();
         
         final String type = rootNode.path("type").textValue();
         JsonNode properties;
         switch (type)
         {
             case TYPE_OBJECT:
-                properties = rootNode.get(JS_PROPERTIES);
+                properties = rootNode.get(FIELD_PROPERTIES);
                 Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
                 
                 if (cfg.getWrapping() == SchemaWrapping.ELEMENT)
                 {
                     final Element wrapper = createXsdElement(schemaRoot, XSD_ELEMENT);
-                    wrapper.setAttribute("name", cfg.getName());
+                    wrapper.setAttribute(FIELD_NAME, cfg.getName());
                     wrapper.setAttribute("type", nsAlias + ":" + cfg.getName());
                 }
 
                 final Element schemaComplexType = createXsdElement(schemaRoot, XSD_COMPLEXTYPE);
-                schemaComplexType.setAttribute("name", cfg.getName());
+                schemaComplexType.setAttribute(FIELD_NAME, cfg.getName());
 
                 final Element schemaSequence = createXsdElement(schemaComplexType, XSD_SEQUENCE);
                 
@@ -247,10 +127,17 @@ public class Jsons2Xsd
                 throw new IllegalArgumentException("Unknown root type: " + type);
         }
 
-        // Handle type definitions
-        final JsonNode definitions = rootNode.path("definitions");
-        Assert.notNull(definitions, "\"definitions\" should be found in root of JSON schema\"");
-
+        JsonNode definitions;
+        if (definitionSchema != null)
+        {
+            final JsonNode definitionsRootNode = mapper.readTree(definitionSchema);
+            definitions = definitionsRootNode.path("definitions");
+        }
+        else
+        {
+            definitions = rootNode.path("definitions");
+        }
+        
         doIterateDefinitions(neededElements, schemaRoot, definitions, nsAlias);
 
         return schemaRoot.getOwnerDocument();
@@ -274,52 +161,49 @@ public class Jsons2Xsd
 
     private static void doIterateDefinitions(Set<String> neededElements, Element elem, JsonNode node, String ns)
     {
-        final Iterator<Entry<String, JsonNode>> fieldIter = node.fields();
-        while (fieldIter.hasNext())
-        {
-            final Entry<String, JsonNode> entry = fieldIter.next();
+        Lists.newArrayList(node.fields()).stream()/*.sorted((a,b)->a.getKey().compareTo(b.getKey()))*/.collect(Collectors.toList())
+        .forEach(
+        entry->{
             final String key = entry.getKey();
             final JsonNode val = entry.getValue();
             if (key.equals("Link"))
             {
                 final Element schemaComplexType = createXsdElement(elem, XSD_COMPLEXTYPE);
-                schemaComplexType.setAttribute("name", key);
+                schemaComplexType.setAttribute(FIELD_NAME, key);
                 final Element href = createXsdElement(schemaComplexType, XSD_ATTRIBUTE);
                 final Element rel = createXsdElement(schemaComplexType, XSD_ATTRIBUTE);
                 final Element title = createXsdElement(schemaComplexType, XSD_ATTRIBUTE);
                 final Element method = createXsdElement(schemaComplexType, XSD_ATTRIBUTE);
                 final Element type = createXsdElement(schemaComplexType, XSD_ATTRIBUTE);
 
-                href.setAttribute("name", "href");
+                href.setAttribute(FIELD_NAME, "href");
                 href.setAttribute("type", TYPE_STRING);
 
-                rel.setAttribute("name", "rel");
+                rel.setAttribute(FIELD_NAME, "rel");
                 rel.setAttribute("type", TYPE_STRING);
 
-                title.setAttribute("name", "title");
+                title.setAttribute(FIELD_NAME, "title");
                 title.setAttribute("type", TYPE_STRING);
 
-                method.setAttribute("name", "method");
+                method.setAttribute(FIELD_NAME, "method");
                 method.setAttribute("type", TYPE_STRING);
 
-                type.setAttribute("name", "type");
+                type.setAttribute(FIELD_NAME, "type");
                 type.setAttribute("type", TYPE_STRING);
-
             }
             else
             {
-
                 final Element schemaComplexType = createXsdElement(elem, XSD_COMPLEXTYPE);
-                schemaComplexType.setAttribute("name", key);
+                schemaComplexType.setAttribute(FIELD_NAME, key);
 
                 final Element schemaSequence = createXsdElement(schemaComplexType, XSD_SEQUENCE);
-                final JsonNode properties = val.get(JS_PROPERTIES);
+                final JsonNode properties = val.get(FIELD_PROPERTIES);
                 Assert.notNull(properties, "\"properties\" property should be found in \"" + key + "\"");
 
                 doIterate(neededElements, schemaSequence, properties, getRequiredList(val), ns);
             }
 
-        }
+        });
     }
 
     private static void doIterate(Set<String> neededElements, Element elem, JsonNode node, List<String> requiredList, String ns)
@@ -348,7 +232,7 @@ public class Jsons2Xsd
             name = key;
         }
 
-        nodeElem.setAttribute("name", name);
+        nodeElem.setAttribute(FIELD_NAME, name);
 
         if (!TYPE_OBJECT.equals(xsdType) && !TYPE_ARRAY.equals(xsdType))
         {
@@ -397,11 +281,11 @@ public class Jsons2Xsd
         nodeElem.removeAttribute("type");
         String fixRef = refs.asText().replace("#/definitions/", ns + ":");
         String name = fixRef.substring(ns.length() + 1);
-        String oldName = nodeElem.getAttribute("name");
+        String oldName = nodeElem.getAttribute(FIELD_NAME);
 
         if (oldName.length() <= 0)
         {
-            nodeElem.setAttribute("name", name);
+            nodeElem.setAttribute(FIELD_NAME, name);
         }
         nodeElem.setAttribute("type", fixRef);
         
@@ -443,7 +327,7 @@ public class Jsons2Xsd
 
     private static void handleObject(Set<String> neededElements, Element nodeElem, JsonNode val, String ns)
     {
-        final JsonNode properties = val.get(JS_PROPERTIES);
+        final JsonNode properties = val.get(FIELD_PROPERTIES);
         if (properties != null)
         {
             final Element complexType = createXsdElement(nodeElem, XSD_COMPLEXTYPE);
@@ -511,7 +395,7 @@ public class Jsons2Xsd
         }
         else
         {
-            arrElem.setAttribute("name", "item");
+            arrElem.setAttribute(FIELD_NAME, "item");
             arrElem.setAttribute("type", arrayXsdType);
         }
         
@@ -535,7 +419,7 @@ public class Jsons2Xsd
         final boolean isRef = node.get("$ref") != null;
         if (isRef)
         {
-            return "reference";
+            return TYPE_REFERENCE;
         }
         else if (isEnum)
         {
@@ -569,13 +453,13 @@ public class Jsons2Xsd
 
     private static List<String> getRequiredList(JsonNode jsonNode)
     {
-        if (jsonNode.path(JS_REQUIRED).isMissingNode())
+        if (jsonNode.path(FIELD_REQUIRED).isMissingNode())
         {
             return Collections.emptyList();
         }
-        Assert.isTrue(jsonNode.path(JS_REQUIRED).isArray(), "'required' property must have type: array");
+        Assert.isTrue(jsonNode.path(FIELD_REQUIRED).isArray(), "'required' property must have type: array");
         List<String> requiredList = new ArrayList<>();
-        for (JsonNode requiredField : jsonNode.withArray("required"))
+        for (JsonNode requiredField : jsonNode.withArray(FIELD_REQUIRED))
         {
             Assert.isTrue(requiredField.isTextual(), "required must be string");
             requiredList.add(requiredField.asText());

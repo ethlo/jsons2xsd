@@ -26,7 +26,7 @@ public class ConversionTest
 {
     @Ignore
     @Test
-    public void testIssue8ArraySchema() throws IOException, TransformerException
+    public void testArraySchema() throws IOException, TransformerException
     {
         try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/arrayschema.json")))
         {
@@ -34,11 +34,29 @@ public class ConversionTest
                 .wrapping(SchemaWrapping.ELEMENT)
                 .targetNamespace("http://ethlo.com/schema/array-test-1.0.xsd")
                 .nsAlias("mySpecialElement")
+                .name("array")
                 .build();
             final Document doc = Jsons2Xsd.convert(r, cfg);
             assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/arrayschema.xsd"));
         }
     }
+    
+    @Test
+    public void testJsonOrgDiskSchema() throws IOException, TransformerException
+    {
+        try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/json.org.2.json")))
+        {
+            final Config cfg = new Config.Builder()
+                .wrapping(SchemaWrapping.ELEMENT)
+                .targetNamespace("http://json-schema.org/example2.html")
+                .nsAlias("example2")
+                .name("Example2")
+                .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/json.org.2.xsd"));
+        }
+    }
+    
     
 	@Test
 	public void testConversionAbcd() throws IOException, TransformerException
@@ -56,7 +74,6 @@ public class ConversionTest
         }
 	}
 
-	@Ignore
 	@Test
 	public void testConversionCMTS() throws IOException, TransformerException
 	{
@@ -70,7 +87,8 @@ public class ConversionTest
                 .attributesQualified(true)
                 .build();
 			final Document doc = Jsons2Xsd.convert(r, cfg);
-            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/cmts.xsd"));
+			final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
+            assertThat(actual).isXmlEqualTo(load("schema/cmts.xsd"));
 		}
 	}
 	
@@ -90,7 +108,7 @@ public class ConversionTest
         final Document doc = Jsons2Xsd.convert(schema, definitions, cfg);
         final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
             
-        final String expected = load("schema/cmts.xsd");
+        final String expected = load("schema/account.xsd");
         assertThat(actual).isXmlEqualTo(expected);
     }
 
