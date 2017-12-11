@@ -152,8 +152,8 @@
 	</build>
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<name>MIT</name>
+			<url>LICENSE</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -175,6 +175,10 @@
 			<name>Nexus Release Repository</name>
 			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
 		<dependency>
@@ -182,9 +186,9 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>com.sun.xsom</groupId>
-		    <artifactId>xsom</artifactId>
-		    <version>20140925</version>
+			<groupId>com.sun.xsom</groupId>
+			<artifactId>xsom</artifactId>
+			<version>20140925</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

@@ -34,6 +34,8 @@ public class Config
     private String name;
     private boolean attributesQualified;
     private boolean includeOnlyUsedTypes;
+    private boolean validateXsdSchema;
+    private boolean capitalizeTypeNames;
     
     public boolean isAttributesQualified()
     {
@@ -64,6 +66,16 @@ public class Config
     {
         return createRootElement;
     }
+    
+    public boolean isCaptializeTypeNames()
+    {
+        return capitalizeTypeNames;
+    }
+
+    public boolean isValidateXsdSchema()
+    {
+        return validateXsdSchema;
+    }
 
     public static class Builder
     {
@@ -73,6 +85,9 @@ public class Config
         private boolean createRootElement = false;
         private boolean attributesQualified = false;
         private boolean includeOnlyUsedTypes = false;
+        private boolean validateXsdSchema = true;
+        private boolean capitalizeTypeNames = true;
+
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -117,8 +132,20 @@ public class Config
             this.attributesQualified = b;
             return this;
         }
+        
+        public Builder capitalizeTypeNames(boolean b)
+        {
+            this.capitalizeTypeNames = b;
+            return this;
+        }
+        
+        public Builder validateXsdSchema(boolean b)
+        {
+            this.validateXsdSchema = b;
+            return this;
+        }
     }
-
+    
     private Config(Builder builder)
     {
         this.targetNamespace = builder.targetNamespace;
@@ -127,15 +154,7 @@ public class Config
         this.name = builder.name;
         this.attributesQualified = builder.attributesQualified;
         this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
-    }
-
-    public boolean isCaptializeTypeNames()
-    {
-        return true;
-    }
-
-    public boolean isValidateXsdSchema()
-    {
-        return true;
+        this.capitalizeTypeNames = builder.capitalizeTypeNames;
+        this.validateXsdSchema = builder.validateXsdSchema;
     }
 }

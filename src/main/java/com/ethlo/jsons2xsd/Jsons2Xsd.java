@@ -47,14 +47,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Jsons2Xsd
 {
-    private Jsons2Xsd()
-    {
-    }
-
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    private static final Map<String, String> typeMapping = new HashMap<>();
-
     public static final String TYPE_REFERENCE = "reference";
     public static final String TYPE_ENUM = "enum";
 
@@ -88,6 +80,7 @@ public class Jsons2Xsd
     public static final String JSON_BOOLEAN = "boolean";
     public static final String JSON_INTEGER = "integer";
 
+    private static final Map<String, String> typeMapping = new HashMap<>();
     static
     {
         // Primitive types
@@ -116,6 +109,13 @@ public class Jsons2Xsd
         typeMapping.put("string|color", XSD_STRING);
         typeMapping.put("string|style", XSD_STRING);
     }
+
+    
+    private Jsons2Xsd()
+    {
+    }
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static Document convert(Reader jsonSchema, Config cfg) throws IOException
     {
