@@ -100,9 +100,7 @@ public class ConversionTest
                 .targetNamespace("http://ethlo.com/schema/pet-test-1.0.xsd")
                 .name("pet")
                 .build();
-            final Document doc = Jsons2Xsd.convert(r, cfg);
-            final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
-            assertThat(actual).isXmlEqualTo(load("schema/petschema.xsd"));
+            Jsons2Xsd.convert(r, cfg);
         }
     }
     
