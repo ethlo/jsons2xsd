@@ -6,19 +6,92 @@ jsons2xsd
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b60e8e4fd0d541c5ac669c971850316f)](https://www.codacy.com/app/ethlo/jsons2xsd?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ethlo/jsons2xsd&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/ethlo/jsons2xsd.svg?branch=v2.0)](https://travis-ci.org/ethlo/jsons2xsd)
 
-Json schema (http://json-schema.org/) to XML schema (XSD) converter.
+[JSON-schema](http://json-schema.org/) to [XML schema](https://www.w3.org/TR/xmlschema11-1/) converter written in Java.
 
 ## Features
 * Single purpose library
 * Fast
-* Minimal dependencies (Jackson)
+* Minimal dependencies
+
+## Snapshots
+
+```xml
+<repositories>
+  <snapshotRepository>
+	  <id>sonatype-nexus-snapshots</id>
+		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </snapshotRepository>
+</repositories>
+```
+
+## Dependency
+```xml
+<dependency>
+  <groupId>com.ethlo</groupId>
+  <artifactId>jsons2xsd</artifactId>
+  <version>2.0-SNAPSHOT</version>
+</dependency>
+```
 
 ## Usage
 
 ```java
-final Reader jsonSchema = ...;
-final String targetNameSpaceUri = "http://my.example.com/ns";
-final OuterWrapping wrapping = OuterWrapping.TYPE;
-final String name = "mySpecialType";
-final Document xsdDocument = Jsons2Xsd.convert(jsonSchema, targetNameSpaceUri, wrapping, name);
+try (final Reader r = ...)
+{
+  final Config cfg = new Config.Builder()
+    .createRootElement(false)
+    .targetNamespace("http://ethlo.com/schema/array-test-1.0.xsd")
+    .name("array")
+    .build();
+  final Document doc = Jsons2Xsd.convert(r, cfg);
+  System.out.println(XmlUtil.asXmlString(doc.getDocumentElement()));
+}
+```
+
+Example input:
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "price": {
+        "type": "number",
+        "minmum": 0
+      },
+      "name": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 32
+      },
+      "isExpired": {
+        "default": false,
+        "type": "boolean"
+      }
+    }
+  }
+}
+```
+
+Example output:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+  targetNamespace="http://ethlo.com/schema/array-test-1.0.xsd"
+  xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/array-test-1.0.xsd">
+  <complexType name="array">
+    <sequence>
+      <element minOccurs="0" name="Price" type="decimal"/>
+      <element minOccurs="0" name="Name">
+        <simpleType>
+          <restriction base="string">
+            <minLength value="5"/>
+            <maxLength value="32"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element minOccurs="0" name="IsExpired" type="boolean"/>
+  </sequence>
+</complexType>
+</schema>
 ```
