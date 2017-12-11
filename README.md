@@ -17,10 +17,13 @@ jsons2xsd
 
 ```xml
 <repositories>
-  <snapshotRepository>
-	  <id>sonatype-nexus-snapshots</id>
-		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  </snapshotRepository>
+  <repository>
+    <id>sonatype-nexus-snapshots</id>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
 </repositories>
 ```
 
