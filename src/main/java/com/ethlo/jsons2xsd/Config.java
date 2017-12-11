@@ -128,4 +128,14 @@ public class Config
         this.attributesQualified = builder.attributesQualified;
         this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
     }
+
+    public boolean isCaptializeTypeNames()
+    {
+        return true;
+    }
+
+    public boolean isValidateXsdSchema()
+    {
+        return true;
+    }
 }

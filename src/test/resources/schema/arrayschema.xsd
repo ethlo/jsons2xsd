@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns:mySpecialElement="http://ethlo.com/schema/array-test-1.0.xsd"
-	elementFormDefault="qualified" targetNamespace="http://ethlo.com/schema/array-test-1.0.xsd"
-	xmlns="http://www.w3.org/2001/XMLSchema">
-	<complexType name="foo">
-		<sequence>
-			<element minOccurs="0" name="Price" type="decimal" />
-			<element minOccurs="0" name="Name" type="string" />
-			<element minOccurs="0" name="IsExpired" type="boolean" />
-		</sequence>
-	</complexType>
+<schema elementFormDefault="qualified"
+    targetNamespace="http://ethlo.com/schema/array-test-1.0.xsd"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/array-test-1.0.xsd">
+    <complexType name="array">
+        <sequence>
+            <element minOccurs="0" name="Price" type="decimal"/>
+            <element minOccurs="0" name="Name">
+                <simpleType>
+                    <restriction base="string">
+                        <minLength value="5"/>
+                        <maxLength value="32"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="IsExpired" type="boolean"/>
+        </sequence>
+    </complexType>
 </schema>

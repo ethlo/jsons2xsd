@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+    targetNamespace="http://ethlo.com/schema/array-test-1.0.xsd"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/array-test-1.0.xsd">
+    <complexType name="array2">
+        <sequence>
+            <element minOccurs="0" name="Item0" type="decimal"/>
+            <element minOccurs="0" name="Item1" type="string"/>
+            <element minOccurs="0" name="Item2">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Street"/>
+                        <enumeration value="Avenue"/>
+                        <enumeration value="Boulevard"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="Item3">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="NW"/>
+                        <enumeration value="NE"/>
+                        <enumeration value="SW"/>
+                        <enumeration value="SE"/>
+                    </restriction>
+                </simpleType>
+            </element>
+        </sequence>
+    </complexType>
+</schema>

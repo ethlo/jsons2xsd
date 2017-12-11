@@ -38,22 +38,15 @@ import java.nio.file.Paths;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.ethlo.jsons2xsd.Assert;
-import com.ethlo.jsons2xsd.Config;
-import com.ethlo.jsons2xsd.Jsons2Xsd;
-import com.ethlo.jsons2xsd.XmlUtil;
-
 public class ConversionTest
 {
-    @Ignore
     @Test
     public void testArraySchema() throws IOException, TransformerException
     {
-        try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/arrayschema.json")))
+        try (final Reader r = reader("/schema/arrayschema.json"))
         {
             final Config cfg = new Config.Builder()
                 .createRootElement(false)
@@ -66,9 +59,57 @@ public class ConversionTest
     }
     
     @Test
+    public void testArraySchema2() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/arrayschema2.json"))
+        {
+            final Config cfg = new Config.Builder()
+                .createRootElement(false)
+                .targetNamespace("http://ethlo.com/schema/array-test-1.0.xsd")
+                .name("array2")
+                .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
+            assertThat(actual).isXmlEqualTo(load("schema/arrayschema2.xsd"));
+        }
+    }
+    
+    @Test
+    public void testPetSchema() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/petschema.json"))
+        {
+            final Config cfg = new Config.Builder()
+                .createRootElement(false)
+                .targetNamespace("http://ethlo.com/schema/pet-test-1.0.xsd")
+                .name("petOfChoice")
+                .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
+            assertThat(actual).isXmlEqualTo(load("schema/petschema.xsd"));
+        }
+    }
+    
+    @Test(expected=InvalidXsdSchema.class)
+    public void testPetSchemaXsdValidationFails() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/petschema.json"))
+        {
+            final Config cfg = new Config.Builder()
+                .createRootElement(false)
+                .targetNamespace("http://ethlo.com/schema/pet-test-1.0.xsd")
+                .name("pet")
+                .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            final String actual = XmlUtil.asXmlString(doc.getDocumentElement());
+            assertThat(actual).isXmlEqualTo(load("schema/petschema.xsd"));
+        }
+    }
+    
+    @Test
     public void testJsonOrgDiskSchema() throws IOException, TransformerException
     {
-        try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/json.org.2.json")))
+        try (final Reader r = reader("/schema/json.org.2.json"))
         {
             final Config cfg = new Config.Builder()
                 .createRootElement(true)
@@ -85,7 +126,7 @@ public class ConversionTest
 	@Test
 	public void testConversionAbcd() throws IOException, TransformerException
 	{
-	    try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/abcd.json")))
+	    try (final Reader r = reader("/schema/abcd.json"))
         {
 	        final Config cfg = new Config.Builder()
                 .createRootElement(true)
@@ -101,7 +142,7 @@ public class ConversionTest
 	@Test
 	public void testConversionCMTS() throws IOException, TransformerException
 	{
-		try (final Reader r = new InputStreamReader(getClass().getResourceAsStream("/schema/account.json")))
+		try (final Reader r = reader("/schema/account.json"))
 		{
 		    final Config cfg = new Config.Builder()
                 .createRootElement(true)

@@ -4,7 +4,8 @@
         "type": "object",
         "properties": {
             "price": {
-                "type": "number"
+                "type": "number",
+                "minmum": 0
             },
             "name": {
                 "type": "string",
@@ -15,6 +16,6 @@
                 "default": false,
                 "type": "boolean"
             }
-        }
+       	}
     }
 }
