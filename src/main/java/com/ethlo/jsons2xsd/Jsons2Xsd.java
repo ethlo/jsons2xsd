@@ -44,6 +44,7 @@ import org.w3c.dom.Node;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class Jsons2Xsd
 {
@@ -52,6 +53,7 @@ public class Jsons2Xsd
 
     public static final String FIELD_NAME = "name";
     public static final String FIELD_PROPERTIES = "properties";
+    public static final String FIELD_ITEMS = "items";
     public static final String FIELD_REQUIRED = "required";
 
     public static final String XSD_ATTRIBUTE = "attribute";
@@ -61,6 +63,7 @@ public class Jsons2Xsd
     public static final String XSD_SIMPLETYPE = "simpleType";
     public static final String XSD_RESTRICTION = "restriction";
     public static final String XSD_VALUE = "value";
+    public static final String XSD_CHOICE = "choice";
 
     public static final String XSD_STRING = "string";
     public static final String XSD_INT = "int";
@@ -79,6 +82,9 @@ public class Jsons2Xsd
     public static final String JSON_NUMBER = "number";
     public static final String JSON_BOOLEAN = "boolean";
     public static final String JSON_INTEGER = "integer";
+    
+    public static final String JSON_REF = "$ref";
+    public static final String JSON_DEFINITIONS = "definitions";
 
     private static final Map<String, String> typeMapping = new HashMap<>();
     static
@@ -109,11 +115,8 @@ public class Jsons2Xsd
         typeMapping.put("string|color", XSD_STRING);
         typeMapping.put("string|style", XSD_STRING);
     }
-
     
-    private Jsons2Xsd()
-    {
-    }
+    private Jsons2Xsd(){}
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -148,11 +151,11 @@ public class Jsons2Xsd
         if (definitionSchema != null)
         {
             final JsonNode definitionsRootNode = mapper.readTree(definitionSchema);
-            definitions = definitionsRootNode.path("definitions");
+            definitions = definitionsRootNode.path(JSON_DEFINITIONS);
         }
         else
         {
-            definitions = rootNode.path("definitions");
+            definitions = rootNode.path(JSON_DEFINITIONS);
         }
 
         doIterateDefinitions(neededElements, schemaRoot, definitions, cfg);
@@ -167,23 +170,20 @@ public class Jsons2Xsd
 
     private static void handleArraySchema(Config cfg, JsonNode rootNode, Element schemaRoot, Set<String> neededElements)
     {
-        final JsonNode items = rootNode.path("items");
+        final JsonNode items = rootNode.path(FIELD_ITEMS);
         Assert.notNull(items, "\"items\" property should be found in root of an array schema\"");
         
         final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot);
 
-        JsonNode properties;
         if (!items.isArray())
         {
             // Just one type possible
-            properties = items.get("properties");
+            doIterate(neededElements, schemaSequence, items.get(FIELD_PROPERTIES), getRequiredList(items), cfg);
         }
         else
         {
-            properties = items;
+            doIterate(neededElements, schemaSequence, items, getRequiredList(rootNode), cfg);
         }
-        
-        doIterate(neededElements, schemaSequence, properties, getRequiredList(rootNode), cfg);
     }
 
     private static Element createRootElementIfNeeded(Config cfg, Element schemaRoot)
@@ -269,15 +269,43 @@ public class Jsons2Xsd
             }
             else
             {
-                final Element schemaComplexType = element(elem, XSD_COMPLEXTYPE);
-                schemaComplexType.setAttribute(FIELD_NAME, key);
-
-                final Element schemaSequence = element(schemaComplexType, XSD_SEQUENCE);
-                final JsonNode properties = val.get(FIELD_PROPERTIES);
-                Assert.notNull(properties, "\"properties\" property should be found in \"" + key + "\"");
-
-                doIterate(neededElements, schemaSequence, properties, getRequiredList(val), cfg);
+                handleObject(neededElements, key, elem, val, cfg);
             }
+        }
+    }
+    
+    private static void handleObject(Set<String> neededElements, String key, Element elem, JsonNode node, Config cfg)
+    {
+        final JsonNode properties = node.get(FIELD_PROPERTIES);
+        if (properties != null)
+        {
+            final Element complexType = element(elem, XSD_COMPLEXTYPE);
+            complexType.setAttribute(FIELD_NAME, key);
+            final Element schemaSequence = element(complexType, XSD_SEQUENCE);
+            
+            doIterate(neededElements, schemaSequence, properties, getRequiredList(node), cfg);
+        }
+        else if (node.get("oneOf") != null)
+        {
+            final ArrayNode oneOf = (ArrayNode) node.get("oneOf");
+            handleChoice(neededElements, elem, oneOf, cfg);
+        }
+    }
+
+    private static void handleChoice(Set<String> neededElements, Element elem, ArrayNode oneOf, Config cfg)
+    {
+        final Element complexTypeElem = element(elem, XSD_COMPLEXTYPE);
+        final Element choiceElem = element(complexTypeElem, XSD_CHOICE);
+        for (JsonNode e : oneOf)
+        {
+            final Element nodeElem = element(choiceElem, XSD_ELEMENT);
+            final JsonNode refs = e.get(JSON_REF);
+            String fixRef = refs.asText().replace("#/definitions/", cfg.getNsAlias() + ":");
+            String name = fixRef.substring(cfg.getNsAlias().length() + 1);
+            nodeElem.setAttribute(FIELD_NAME, name);
+            nodeElem.setAttribute("type", fixRef);
+
+            neededElements.add(name);
         }
     }
 
@@ -306,11 +334,11 @@ public class Jsons2Xsd
         }
     }
 
-    private static void doIterateSingle(Set<String> neededElements, String key, JsonNode val, Element elem, boolean required, Config cfg)
+    private static void doIterateSingle(Set<String> neededElements, String name, JsonNode val, Element elem, boolean required, Config cfg)
     {
-        final String xsdType = determineXsdType(key, val);
+        final String xsdType = determineXsdType(name, val);
         final Element nodeElem = element(elem, XSD_ELEMENT);
-        final String name = cfg.isCaptializeTypeNames() && !key.equals("link") ? capitalize(key) : key;
+        //final String name = cfg.isCaptializeTypeNames() && !key.equals("link") ? capitalize(key) : key;
 
         nodeElem.setAttribute(FIELD_NAME, name);
 
@@ -342,7 +370,7 @@ public class Jsons2Xsd
                 break;
 
             case XSD_OBJECT:
-                handleObject(neededElements, nodeElem, val, cfg);
+                handleObject(neededElements, name, nodeElem, val, cfg);
                 break;
 
             case XSD_STRING:
@@ -364,7 +392,7 @@ public class Jsons2Xsd
 
     private static void handleReference(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
     {
-        final JsonNode refs = val.get("$ref");
+        final JsonNode refs = val.get(JSON_REF);
         nodeElem.removeAttribute("type");
         String fixRef = refs.asText().replace("#/definitions/", cfg.getNsAlias() + ":");
         String name = fixRef.substring(cfg.getNsAlias().length() + 1);
@@ -409,18 +437,6 @@ public class Jsons2Xsd
                 final Element max = element(restriction, "pattern");
                 max.setAttribute(XSD_VALUE, expression);
             }
-        }
-    }
-
-    private static void handleObject(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
-    {
-        final JsonNode properties = val.get(FIELD_PROPERTIES);
-        if (properties != null)
-        {
-            final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
-            final Element sequence = element(complexType, XSD_SEQUENCE);
-            Assert.notNull(properties, "'object' type must have a 'properties' attribute");
-            doIterate(neededElements, sequence, properties, getRequiredList(val), cfg);
         }
     }
 
@@ -483,7 +499,7 @@ public class Jsons2Xsd
         }
         else if (arrayXsdType.equals(JSON_OBJECT))
         {
-            handleObject(neededElements, arrElem, arrItems, cfg);
+            handleObject(neededElements, null, arrElem, arrItems, cfg);
         }
         else
         {
@@ -505,7 +521,7 @@ public class Jsons2Xsd
         final String jsonType = node.path("type").textValue();
         final String jsonFormat = node.path("format").textValue();
         final boolean isEnum = node.get(TYPE_ENUM) != null;
-        final boolean isRef = node.get("$ref") != null;
+        final boolean isRef = node.get(JSON_REF) != null;
         if (isRef)
         {
             return TYPE_REFERENCE;

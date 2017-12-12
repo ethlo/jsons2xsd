@@ -86,8 +86,6 @@ public class Config
         private boolean attributesQualified = false;
         private boolean includeOnlyUsedTypes = false;
         private boolean validateXsdSchema = true;
-        private boolean capitalizeTypeNames = true;
-
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -133,12 +131,6 @@ public class Config
             return this;
         }
         
-        public Builder capitalizeTypeNames(boolean b)
-        {
-            this.capitalizeTypeNames = b;
-            return this;
-        }
-        
         public Builder validateXsdSchema(boolean b)
         {
             this.validateXsdSchema = b;
@@ -154,7 +146,6 @@ public class Config
         this.name = builder.name;
         this.attributesQualified = builder.attributesQualified;
         this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
-        this.capitalizeTypeNames = builder.capitalizeTypeNames;
         this.validateXsdSchema = builder.validateXsdSchema;
     }
 }

@@ -4,9 +4,9 @@
     xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/array-test-1.0.xsd">
     <complexType name="array2">
         <sequence>
-            <element minOccurs="0" name="Item0" type="decimal"/>
-            <element minOccurs="0" name="Item1" type="string"/>
-            <element minOccurs="0" name="Item2">
+            <element minOccurs="0" name="item0" type="decimal"/>
+            <element minOccurs="0" name="item1" type="string"/>
+            <element minOccurs="0" name="item2">
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="Street"/>
@@ -15,7 +15,7 @@
                     </restriction>
                 </simpleType>
             </element>
-            <element minOccurs="0" name="Item3">
+            <element minOccurs="0" name="item3">
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="NW"/>

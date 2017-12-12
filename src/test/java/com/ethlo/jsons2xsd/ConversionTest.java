@@ -114,6 +114,7 @@ public class ConversionTest
                 .targetNamespace("http://json-schema.org/example2.html")
                 .nsAlias("example2")
                 .name("Example2")
+                .validateXsdSchema(true)
                 .build();
             final Document doc = Jsons2Xsd.convert(r, cfg);
             assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/json.org.2.xsd"));

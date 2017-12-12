@@ -1,249 +1,259 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns:account="http://cableapi.cablelabs.com/schemas/v1/Account" elementFormDefault="qualified" targetNamespace="http://cableapi.cablelabs.com/schemas/v1/Account" xmlns="http://www.w3.org/2001/XMLSchema">
-  <element name="Account" type="account:Account"/>
-  <complexType name="Account">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-      <element minOccurs="0" name="AccountNumber" type="string"/>
-      <element minOccurs="0" name="Name" type="string"/>
-      <element minOccurs="0" name="Type">
-        <simpleType>
-          <restriction base="string">
-            <enumeration value="Individual"/>
-            <enumeration value="Joint"/>
-            <enumeration value="Other"/>
-          </restriction>
-        </simpleType>
-      </element>
-      <element minOccurs="0" name="Pin" type="int"/>
-      <element minOccurs="0" name="Status">
-        <simpleType>
-          <restriction base="string">
-            <enumeration value="Active"/>
-            <enumeration value="Suspended"/>
-            <enumeration value="Inactive"/>
-            <enumeration value="Closed"/>
-          </restriction>
-        </simpleType>
-      </element>
-      <element minOccurs="0" name="FinancialStatus">
-        <simpleType>
-          <restriction base="string">
-            <enumeration value="Current"/>
-            <enumeration value="Due"/>
-            <enumeration value="InArrears"/>
-            <enumeration value="Delinquent"/>
-          </restriction>
-        </simpleType>
-      </element>
-      <element minOccurs="0" name="CreditLimit" type="int"/>
-      <element minOccurs="0" name="Customer" type="account:CustomerSummary"/>
-      <element minOccurs="0" name="ServiceAddress" type="account:PropertyAddress"/>
-      <element minOccurs="0" name="PrimaryUser" type="account:UserSummary"/>
-      <element minOccurs="0" name="Users">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="UserSummary" type="account:UserSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="Financials" type="account:FinancialSummary"/>
-      <element minOccurs="0" name="Billing" type="account:BillingSummary"/>
-      <element minOccurs="0" name="Payments" type="account:PaymentSummary"/>
-      <element minOccurs="0" name="Products">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="ProductSummary" type="account:ProductSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="Devices">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="DeviceSummary" type="account:DeviceSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="TaxExemptions" type="account:TaxExemptions"/>
-      <element minOccurs="0" name="Sites">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="SiteSummary" type="account:SiteSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="Preferences">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="PreferenceSummary" type="account:PreferenceSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="RelatedAccounts">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="AccountSummary" type="account:AccountSummary"/>
-          </sequence>
-        </complexType>
-      </element>
-    </sequence>
-  </complexType>
-  <complexType name="DeviceSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="Name" type="string"/>
-      <element name="Type" type="string"/>
-      <element name="MacAddress" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="BillingSummary">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-    </sequence>
-  </complexType>
-  <complexType name="CustomerSummary">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-    </sequence>
-  </complexType>
-  <complexType name="UserSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element minOccurs="0" name="Username" type="string"/>
-      <element minOccurs="0" name="Name" type="string"/>
-      <element minOccurs="0" name="Status" type="string"/>
-      <element minOccurs="0" name="Profile" type="account:PartySummary"/>
-    </sequence>
-  </complexType>
-  <complexType name="PartySummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="Name" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="FinancialSummary">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-    </sequence>
-  </complexType>
-  <complexType name="PaymentSummary">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-    </sequence>
-  </complexType>
-  <complexType name="ProductSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="Name" type="string"/>
-      <element name="IsBundle" type="boolean"/>
-      <element name="Description" type="string"/>
-      <element name="ProductStatus" type="string"/>
-      <element name="ProductSerialNumber" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="TaxExemptions">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-    </sequence>
-  </complexType>
-  <complexType name="SiteSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="Name" type="string"/>
-      <element name="MultiTenant" type="boolean"/>
-      <element name="ClliCode" type="string"/>
-      <element name="SiteHours" type="string"/>
-      <element name="Status">
-        <simpleType>
-          <restriction base="string">
-            <enumeration value="Active"/>
-            <enumeration value="Off"/>
-            <enumeration value="Pending"/>
-          </restriction>
-        </simpleType>
-      </element>
-    </sequence>
-  </complexType>
-  <complexType name="PreferenceSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="PreferenceName" type="string"/>
-      <element name="Value" type="string"/>
-      <element name="UnitOfMeasure" type="string"/>
-      <element name="ValueType" type="string"/>
-      <element name="IsSet" type="boolean"/>
-      <element name="PreferenceCategory" type="account:PreferenceCategory"/>
-    </sequence>
-  </complexType>
-  <complexType name="PreferenceCategory">
-    <sequence>
-      <element name="PreferenceCategoryName" type="string"/>
-      <element name="Description" type="string"/>
-      <element name="PreferenceCategoryId" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="AccountSummary">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element name="Name" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="Link">
-    <attribute name="href" type="string"/>
-    <attribute name="rel" type="string"/>
-    <attribute name="title" type="string"/>
-    <attribute name="method" type="string"/>
-    <attribute name="type" type="string"/>
-  </complexType>
-  <complexType name="PropertyAddress">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element minOccurs="0" name="Postalcode" type="string"/>
-      <element minOccurs="0" name="State_province" type="string"/>
-      <element name="link" type="account:Link"/>
-      <element minOccurs="0" name="Locality" type="string"/>
-      <element minOccurs="0" name="Property" type="account:Property"/>
-      <element minOccurs="0" name="FormattedAddressLine2" type="string"/>
-      <element minOccurs="0" name="FormattedAddressLine1" type="string"/>
-      <element minOccurs="0" name="PostcodeExtension" type="string"/>
-      <element minOccurs="0" name="Country" type="string"/>
-    </sequence>
-  </complexType>
-  <complexType name="Property">
-    <sequence>
-      <element name="Id" type="string"/>
-      <element minOccurs="0" name="LotNr" type="string"/>
-      <element minOccurs="0" name="LandUse" type="string"/>
-      <element minOccurs="0" name="Name" type="string"/>
-      <element minOccurs="0" name="Elevation" type="string"/>
-      <element minOccurs="0" name="link" type="account:Link"/>
-      <element minOccurs="0" name="LandCover" type="string"/>
-      <element minOccurs="0" name="PropertyAddresses">
-        <complexType>
-          <sequence>
-            <element maxOccurs="unbounded" minOccurs="0" name="PropertyAddress" type="account:PropertyAddress"/>
-          </sequence>
-        </complexType>
-      </element>
-      <element minOccurs="0" name="NaturalRisks" type="string"/>
-      <element minOccurs="0" name="Geometry" type="account:Geometry"/>
-    </sequence>
-  </complexType>
-  <complexType name="Geometry">
-    <sequence>
-      <element minOccurs="0" name="Id" type="string"/>
-    </sequence>
-  </complexType>
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+    targetNamespace="http://cableapi.cablelabs.com/schemas/v1/Account"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:account="http://cableapi.cablelabs.com/schemas/v1/Account">
+    <element name="Account" type="account:Account"/>
+    <complexType name="Account">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+            <element minOccurs="0" name="accountNumber" type="string"/>
+            <element minOccurs="0" name="name" type="string"/>
+            <element minOccurs="0" name="type">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Individual"/>
+                        <enumeration value="Joint"/>
+                        <enumeration value="Other"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="pin" type="int"/>
+            <element minOccurs="0" name="status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Active"/>
+                        <enumeration value="Suspended"/>
+                        <enumeration value="Inactive"/>
+                        <enumeration value="Closed"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="financialStatus">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Current"/>
+                        <enumeration value="Due"/>
+                        <enumeration value="InArrears"/>
+                        <enumeration value="Delinquent"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="creditLimit" type="int"/>
+            <element minOccurs="0" name="customer" type="account:CustomerSummary"/>
+            <element minOccurs="0" name="serviceAddress" type="account:PropertyAddress"/>
+            <element minOccurs="0" name="primaryUser" type="account:UserSummary"/>
+            <element minOccurs="0" name="users">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="UserSummary" type="account:UserSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="financials" type="account:FinancialSummary"/>
+            <element minOccurs="0" name="billing" type="account:BillingSummary"/>
+            <element minOccurs="0" name="payments" type="account:PaymentSummary"/>
+            <element minOccurs="0" name="products">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="ProductSummary" type="account:ProductSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="devices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="DeviceSummary" type="account:DeviceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="taxExemptions" type="account:TaxExemptions"/>
+            <element minOccurs="0" name="sites">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="SiteSummary" type="account:SiteSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="preferences">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PreferenceSummary" type="account:PreferenceSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="relatedAccounts">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="AccountSummary" type="account:AccountSummary"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="DeviceSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="name" type="string"/>
+            <element name="type" type="string"/>
+            <element name="macAddress" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="BillingSummary">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="CustomerSummary">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="UserSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element minOccurs="0" name="username" type="string"/>
+            <element minOccurs="0" name="name" type="string"/>
+            <element minOccurs="0" name="status" type="string"/>
+            <element minOccurs="0" name="profile" type="account:PartySummary"/>
+        </sequence>
+    </complexType>
+    <complexType name="PartySummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="FinancialSummary">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="PaymentSummary">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="ProductSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="name" type="string"/>
+            <element name="isBundle" type="boolean"/>
+            <element name="description" type="string"/>
+            <element name="productStatus" type="string"/>
+            <element name="productSerialNumber" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="TaxExemptions">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+        </sequence>
+    </complexType>
+    <complexType name="SiteSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="name" type="string"/>
+            <element name="multiTenant" type="boolean"/>
+            <element name="clliCode" type="string"/>
+            <element name="siteHours" type="string"/>
+            <element name="status">
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="Active"/>
+                        <enumeration value="Off"/>
+                        <enumeration value="Pending"/>
+                    </restriction>
+                </simpleType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="PreferenceSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="preferenceName" type="string"/>
+            <element name="value" type="string"/>
+            <element name="unitOfMeasure" type="string"/>
+            <element name="valueType" type="string"/>
+            <element name="isSet" type="boolean"/>
+            <element name="preferenceCategory" type="account:PreferenceCategory"/>
+        </sequence>
+    </complexType>
+    <complexType name="PreferenceCategory">
+        <sequence>
+            <element name="preferenceCategoryName" type="string"/>
+            <element name="description" type="string"/>
+            <element name="preferenceCategoryId" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="AccountSummary">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element name="name" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Link">
+        <attribute name="href" type="string"/>
+        <attribute name="rel" type="string"/>
+        <attribute name="title" type="string"/>
+        <attribute name="method" type="string"/>
+        <attribute name="type" type="string"/>
+    </complexType>
+    <complexType name="PropertyAddress">
+        <sequence>
+            <element name="id" type="string"/>
+            <element minOccurs="0" name="postalcode" type="string"/>
+            <element minOccurs="0" name="state_province" type="string"/>
+            <element name="link" type="account:Link"/>
+            <element minOccurs="0" name="locality" type="string"/>
+            <element minOccurs="0" name="property" type="account:Property"/>
+            <element minOccurs="0" name="formattedAddressLine2" type="string"/>
+            <element minOccurs="0" name="formattedAddressLine1" type="string"/>
+            <element minOccurs="0" name="postcodeExtension" type="string"/>
+            <element minOccurs="0" name="country" type="string"/>
+        </sequence>
+    </complexType>
+    <complexType name="Property">
+        <sequence>
+            <element name="id" type="string"/>
+            <element minOccurs="0" name="lotNr" type="string"/>
+            <element minOccurs="0" name="landUse" type="string"/>
+            <element minOccurs="0" name="name" type="string"/>
+            <element minOccurs="0" name="elevation" type="string"/>
+            <element minOccurs="0" name="link" type="account:Link"/>
+            <element minOccurs="0" name="landCover" type="string"/>
+            <element minOccurs="0" name="propertyAddresses">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="PropertyAddress" type="account:PropertyAddress"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element minOccurs="0" name="naturalRisks" type="string"/>
+            <element minOccurs="0" name="geometry" type="account:Geometry"/>
+        </sequence>
+    </complexType>
+    <complexType name="Geometry">
+        <sequence>
+            <element minOccurs="0" name="id" type="string"/>
+        </sequence>
+    </complexType>
 </schema>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><schema xmlns:x="http://ethlo.com/schema/pet-test-1.0.xsd" elementFormDefault="qualified" targetNamespace="http://ethlo.com/schema/pet-test-1.0.xsd" xmlns="http://www.w3.org/2001/XMLSchema">
   <complexType name="petOfChoice">
     <sequence>
-      <element minOccurs="0" name="Cat" type="x:pet"/>
-      <element minOccurs="0" name="Dog" type="x:pet"/>
+      <element minOccurs="0" name="cat" type="x:pet"/>
+      <element minOccurs="0" name="dog" type="x:pet"/>
     </sequence>
   </complexType>
   <complexType name="pet">
     <sequence>
-      <element name="Name" type="string"/>
-      <element name="Breed" type="string"/>
-      <element name="Age" type="string"/>
+      <element name="name" type="string"/>
+      <element name="breed" type="string"/>
+      <element name="age" type="string"/>
     </sequence>
   </complexType>
 </schema>
