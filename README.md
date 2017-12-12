@@ -8,11 +8,14 @@ jsons2xsd
 
 [JSON-schema](http://json-schema.org/) to [XML schema](https://www.w3.org/TR/xmlschema11-1/) converter written in Java.
 
-## Features
-* Single purpose library
-* Fast
-* Minimal dependencies
-
+## Dependency
+```xml
+<dependency>
+  <groupId>com.ethlo</groupId>
+  <artifactId>jsons2xsd</artifactId>
+  <version>2.0-SNAPSHOT</version>
+</dependency>
+```
 ## Snapshots
 
 ```xml
@@ -27,74 +30,77 @@ jsons2xsd
 </repositories>
 ```
 
-## Dependency
-```xml
-<dependency>
-  <groupId>com.ethlo</groupId>
-  <artifactId>jsons2xsd</artifactId>
-  <version>2.0-SNAPSHOT</version>
-</dependency>
-```
-
 ## Usage
 
 ```java
 try (final Reader r = ...)
 {
   final Config cfg = new Config.Builder()
-    .createRootElement(false)
-    .targetNamespace("http://ethlo.com/schema/array-test-1.0.xsd")
+    .targetNamespace("http://example.com/myschema.xsd")
     .name("array")
     .build();
   final Document doc = Jsons2Xsd.convert(r, cfg);
-  System.out.println(XmlUtil.asXmlString(doc.getDocumentElement()));
 }
 ```
 
-Example input:
+### Example input
 ```json
 {
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "price": {
-        "type": "number",
-        "minmum": 0
+  "type":"array",
+  "items":{
+    "type":"object",
+    "properties":{
+      "price":{
+        "type":"number",
+        "minimum":0
       },
-      "name": {
-        "type": "string",
-        "minLength": 5,
-        "maxLength": 32
+      "name":{
+        "type":"string",
+        "minLength":5,
+        "maxLength":32
       },
-      "isExpired": {
-        "default": false,
-        "type": "boolean"
+      "isExpired":{
+        "default":false,
+        "type":"boolean"
+      },
+      "manufactured":{
+        "type":"string",
+        "format":"date-time"
       }
-    }
+    },
+    "required":[
+      "price",
+      "name",
+      "manufactured"
+    ]
   }
 }
 ```
 
-Example output:
+### Example output
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<schema elementFormDefault="qualified"
-  targetNamespace="http://ethlo.com/schema/array-test-1.0.xsd"
-  xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/array-test-1.0.xsd">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://example.com/myschema.xsd" elementFormDefault="qualified" targetNamespace="http://example.com/myschema.xsd">
   <complexType name="array">
     <sequence>
-      <element minOccurs="0" name="Price" type="decimal"/>
-      <element minOccurs="0" name="Name">
+      <element name="price">
         <simpleType>
-          <restriction base="string">
-            <minLength value="5"/>
-            <maxLength value="32"/>
+          <restriction base="decimal">
+            <minInclusive value="0" />
           </restriction>
         </simpleType>
       </element>
-      <element minOccurs="0" name="IsExpired" type="boolean"/>
-  </sequence>
-</complexType>
+      <element name="name">
+        <simpleType>
+          <restriction base="string">
+            <minLength value="5" />
+            <maxLength value="32" />
+          </restriction>
+        </simpleType>
+      </element>
+      <element minOccurs="0" name="isExpired" type="boolean" />
+      <element name="manufactured" type="dateTime" />
+    </sequence>
+  </complexType>
 </schema>
 ```
