@@ -338,7 +338,6 @@ public class Jsons2Xsd
     {
         final String xsdType = determineXsdType(name, val);
         final Element nodeElem = element(elem, XSD_ELEMENT);
-        //final String name = cfg.isCaptializeTypeNames() && !key.equals("link") ? capitalize(key) : key;
 
         nodeElem.setAttribute(FIELD_NAME, name);
 
@@ -383,11 +382,6 @@ public class Jsons2Xsd
 
             default:
         }
-    }
-
-    private static String capitalize(String s)
-    {
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     private static void handleReference(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
