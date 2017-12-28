@@ -1,6 +1,6 @@
 jsons2xsd
 =========
-[![Maven Central](https://img.shields.io/maven-central/v/com.ethlo.schematools/jsons2xsd.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ethlo.schematools%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.ethlo.jsons2xsd.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ethlo.jsons2xsd%22)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Coverage Status](https://coveralls.io/repos/github/ethlo/jsons2xsd/badge.svg?branch=v2.0)](https://coveralls.io/github/ethlo/jsons2xsd?branch=v2.0)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b60e8e4fd0d541c5ac669c971850316f)](https://www.codacy.com/app/ethlo/jsons2xsd?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ethlo/jsons2xsd&amp;utm_campaign=Badge_Grade)
@@ -11,7 +11,7 @@ jsons2xsd
 ## Dependency
 ```xml
 <dependency>
-  <groupId>com.ethlo</groupId>
+  <groupId>com.ethlo.jsons2xsd</groupId>
   <artifactId>jsons2xsd</artifactId>
   <version>2.0</version>
 </dependency>
