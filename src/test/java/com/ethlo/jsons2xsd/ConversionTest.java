@@ -44,6 +44,23 @@ import org.w3c.dom.Document;
 public class ConversionTest
 {
     @Test
+    public void testCustomSimpleTypemappings() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/customformats.json"))
+        {
+            final Config cfg = new Config.Builder()
+                    .createRootElement(false)
+                    .targetNamespace("http://ethlo.com/schema/custom-test-1.0.xsd")
+                    .name("custom")
+                    .customTypeMapping(JsonSimpleType.INTEGER, "int64", XsdSimpleType.LONG)
+                    .customTypeMapping(JsonSimpleType.INTEGER, "int32", XsdSimpleType.INT)
+                    .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/customformats.xsd"));
+        }
+    }
+
+    @Test
     public void testArraySchema() throws IOException, TransformerException
     {
         try (final Reader r = reader("/schema/arrayschema.json"))
