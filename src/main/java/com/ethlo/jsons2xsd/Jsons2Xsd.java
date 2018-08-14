@@ -78,8 +78,8 @@ public class Jsons2Xsd
     {
         // Primitive types
         typeMapping.put(JsonSimpleType.STRING_VALUE, XsdSimpleType.STRING_VALUE);
-        typeMapping.put(JsonType.OBJECT_VALUE, XsdType.OBJECT_VALUE);
-        typeMapping.put(JsonType.ARRAY_VALUE, XsdType.ARRAY_VALUE);
+        typeMapping.put(JsonComplexType.OBJECT_VALUE, XsdComplexType.OBJECT_VALUE);
+        typeMapping.put(JsonComplexType.ARRAY_VALUE, XsdComplexType.ARRAY_VALUE);
         typeMapping.put(JsonSimpleType.NUMBER_VALUE, XsdSimpleType.DECIMAL_VALUE);
         typeMapping.put(JsonSimpleType.BOOLEAN_VALUE, XsdSimpleType.BOOLEAN_VALUE);
         typeMapping.put(JsonSimpleType.INTEGER_VALUE, XsdSimpleType.INT_VALUE);
@@ -119,11 +119,11 @@ public class Jsons2Xsd
         Assert.notNull(type, "type property of root node must be defined");
         switch (type)
         {
-            case JsonType.OBJECT_VALUE:
+            case JsonComplexType.OBJECT_VALUE:
                 handleObjectSchema(cfg, rootNode, schemaRoot, neededElements);
                 break;
 
-            case JsonType.ARRAY_VALUE:
+            case JsonComplexType.ARRAY_VALUE:
                 handleArraySchema(cfg, rootNode, schemaRoot, neededElements);
                 break;
 
@@ -479,7 +479,7 @@ public class Jsons2Xsd
         {
             handleReference(neededElements, arrElem, arrItems, cfg);
         }
-        else if (arrayXsdType.equals(JsonType.OBJECT_VALUE))
+        else if (arrayXsdType.equals(JsonComplexType.OBJECT_VALUE))
         {
             handleObject(neededElements, null, arrElem, arrItems, cfg);
         }
@@ -512,13 +512,13 @@ public class Jsons2Xsd
         {
             return TYPE_ENUM;
         }
-        else if (jsonType.equalsIgnoreCase(JsonType.OBJECT_VALUE))
+        else if (jsonType.equalsIgnoreCase(JsonComplexType.OBJECT_VALUE))
         {
-            return XsdType.OBJECT_VALUE;
+            return XsdComplexType.OBJECT_VALUE;
         }
-        else if (jsonType.equalsIgnoreCase(JsonType.ARRAY_VALUE))
+        else if (jsonType.equalsIgnoreCase(JsonComplexType.ARRAY_VALUE))
         {
-            return XsdType.ARRAY_VALUE;
+            return XsdComplexType.ARRAY_VALUE;
         }
 
         Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);

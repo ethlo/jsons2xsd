@@ -20,6 +20,8 @@ public enum XsdSimpleType
     public static final String DECIMAL_VALUE = "decimal";
     public static final String TIME_VALUE = "time";
 
+    private final String type;
+
     XsdSimpleType(String type)
     {
         this.type = type;
@@ -29,6 +31,4 @@ public enum XsdSimpleType
     {
         return type;
     }
-
-    private final String type;
 }

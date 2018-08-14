@@ -1,6 +1,6 @@
 package com.ethlo.jsons2xsd;
 
-public enum JsonType
+public enum JsonComplexType
 {
     OBJECT("object"),
     ARRAY("array");
@@ -8,12 +8,12 @@ public enum JsonType
     public static final String OBJECT_VALUE = "object";
     public static final String ARRAY_VALUE = "array";
 
-    JsonType(String type)
+    private final String type;
+
+    JsonComplexType(String type)
     {
         this.type = type;
     }
-
-    private final String type;
 
     private String value()
     {
