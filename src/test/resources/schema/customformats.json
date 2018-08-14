@@ -1,0 +1,31 @@
+{
+  "id": "http://some.site.somewhere/entry-schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "type": "object",
+  "properties": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "age": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ref": {
+          "type": "string",
+          "format": "ext-ref"
+        },
+        "foo": {
+          "type": "string",
+          "format": "bar"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

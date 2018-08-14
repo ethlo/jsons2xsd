@@ -26,17 +26,21 @@ package com.ethlo.jsons2xsd;
  * #L%
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Config
 {
-    private String targetNamespace;
-    private String nsAlias;
-    private boolean createRootElement;
-    private String name;
-    private boolean attributesQualified;
-    private boolean includeOnlyUsedTypes;
-    private boolean validateXsdSchema;
-    private boolean capitalizeTypeNames;
-    
+    private final String targetNamespace;
+    private final String nsAlias;
+    private final boolean createRootElement;
+    private final String name;
+    private final boolean attributesQualified;
+    private final boolean includeOnlyUsedTypes;
+    private final boolean validateXsdSchema;
+    private final Map<String, String> typeMapping;
+    private final boolean ignoreUnknownFormats;
+
     public boolean isAttributesQualified()
     {
         return attributesQualified;
@@ -66,15 +70,26 @@ public class Config
     {
         return createRootElement;
     }
-    
-    public boolean isCaptializeTypeNames()
-    {
-        return capitalizeTypeNames;
-    }
 
     public boolean isValidateXsdSchema()
     {
         return validateXsdSchema;
+    }
+
+    public Map<String, String> getTypeMapping()
+    {
+        return typeMapping;
+    }
+
+    public boolean isIgnoreUnknownFormats()
+    {
+        return ignoreUnknownFormats;
+    }
+
+    public String getType(String type, String format)
+    {
+        final String key = (type + (format != null ? ("|" + format) : "")).toLowerCase();
+        return typeMapping.get(key);
     }
 
     public static class Builder
@@ -86,6 +101,8 @@ public class Config
         private boolean attributesQualified = false;
         private boolean includeOnlyUsedTypes = false;
         private boolean validateXsdSchema = true;
+        private final Map<String, String> typeMapping = new HashMap<>();
+        private boolean ignoreUnknownFormats;
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -136,6 +153,29 @@ public class Config
             this.validateXsdSchema = b;
             return this;
         }
+
+        public Builder customTypeMapping(final JsonSimpleType jsonSimpleType, final String format, final XsdSimpleType xsdSimpleType)
+        {
+            typeMapping.put(jsonSimpleType.value() + "|" + format, xsdSimpleType.value());
+            return this;
+        }
+
+        public Builder nonJsonTypeMapping(final String nonJsonType, final XsdSimpleType xsdSimpleType)
+        {
+            return nonJsonTypeMapping(nonJsonType, null, xsdSimpleType);
+        }
+
+        public Builder nonJsonTypeMapping(final String nonJsonType, final String format, final XsdSimpleType xsdSimpleType)
+        {
+            typeMapping.put(nonJsonType + "|" + format, xsdSimpleType.value());
+            return this;
+        }
+
+        public Builder ignoreUnknownFormats(final boolean b)
+        {
+            this.ignoreUnknownFormats = b;
+            return this;
+        }
     }
     
     private Config(Builder builder)
@@ -147,5 +187,7 @@ public class Config
         this.attributesQualified = builder.attributesQualified;
         this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
         this.validateXsdSchema = builder.validateXsdSchema;
+        this.typeMapping = builder.typeMapping;
+        this.ignoreUnknownFormats = builder.ignoreUnknownFormats;
     }
 }

@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.w3c.dom.Document;
@@ -48,75 +49,57 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class Jsons2Xsd
 {
-    public static final String TYPE_REFERENCE = "reference";
-    public static final String TYPE_ENUM = "enum";
+    private static final String TYPE_REFERENCE = "reference";
+    private static final String TYPE_ENUM = "enum";
 
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_PROPERTIES = "properties";
-    public static final String FIELD_ITEMS = "items";
-    public static final String FIELD_REQUIRED = "required";
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_PROPERTIES = "properties";
+    private static final String FIELD_ITEMS = "items";
+    private static final String FIELD_REQUIRED = "required";
 
-    public static final String XSD_ATTRIBUTE = "attribute";
-    public static final String XSD_ELEMENT = "element";
-    public static final String XSD_SEQUENCE = "sequence";
-    public static final String XSD_COMPLEXTYPE = "complexType";
-    public static final String XSD_SIMPLETYPE = "simpleType";
-    public static final String XSD_RESTRICTION = "restriction";
-    public static final String XSD_VALUE = "value";
-    public static final String XSD_CHOICE = "choice";
+    private static final String XSD_ATTRIBUTE = "attribute";
+    private static final String XSD_ELEMENT = "element";
+    private static final String XSD_SEQUENCE = "sequence";
+    private static final String XSD_COMPLEXTYPE = "complexType";
+    private static final String XSD_SIMPLETYPE = "simpleType";
+    private static final String XSD_RESTRICTION = "restriction";
+    private static final String XSD_VALUE = "value";
+    private static final String XSD_CHOICE = "choice";
 
-    public static final String XSD_STRING = "string";
-    public static final String XSD_INT = "int";
-    public static final String XSD_LONG = "long";
-    public static final String XSD_BOOLEAN = "boolean";
-    public static final String XSD_DATE = "date";
-    public static final String XSD_TIME = "time";
-    public static final String XSD_DATETIME = "dateTime";
-    public static final String XSD_DECIMAL = "decimal";
-    public static final String XSD_OBJECT = "object";
-    public static final String XSD_ARRAY = "array";
+    private static final String XSD_OBJECT = "object";
+    private static final String XSD_ARRAY = "array";
 
-    public static final String JSON_STRING = "string";
-    public static final String JSON_OBJECT = "object";
-    public static final String JSON_ARRAY = "array";
-    public static final String JSON_NUMBER = "number";
-    public static final String JSON_BOOLEAN = "boolean";
-    public static final String JSON_INTEGER = "integer";
-    
-    public static final String JSON_REF = "$ref";
-    public static final String JSON_DEFINITIONS = "definitions";
+    private static final String JSON_REF = "$ref";
+    private static final String JSON_DEFINITIONS = "definitions";
 
     private static final Map<String, String> typeMapping = new HashMap<>();
+
     static
     {
         // Primitive types
-        typeMapping.put(JSON_STRING, XSD_STRING);
-        typeMapping.put(JSON_OBJECT, XSD_OBJECT);
-        typeMapping.put(JSON_ARRAY, XSD_ARRAY);
-        typeMapping.put(JSON_NUMBER, XSD_DECIMAL);
-        typeMapping.put(JSON_BOOLEAN, XSD_BOOLEAN);
-        typeMapping.put(JSON_INTEGER, XSD_INT);
-
-        // Non-standard, often encountered in the wild
-        typeMapping.put("int", XSD_INT);
-        typeMapping.put("date-time", XSD_DATETIME);
-        typeMapping.put("time", XSD_TIME);
-        typeMapping.put("date", XSD_DATE);
+        typeMapping.put(JsonSimpleType.STRING_VALUE, XsdSimpleType.STRING_VALUE);
+        typeMapping.put(JsonComplexType.OBJECT_VALUE, XsdComplexType.OBJECT_VALUE);
+        typeMapping.put(JsonComplexType.ARRAY_VALUE, XsdComplexType.ARRAY_VALUE);
+        typeMapping.put(JsonSimpleType.NUMBER_VALUE, XsdSimpleType.DECIMAL_VALUE);
+        typeMapping.put(JsonSimpleType.BOOLEAN_VALUE, XsdSimpleType.BOOLEAN_VALUE);
+        typeMapping.put(JsonSimpleType.INTEGER_VALUE, XsdSimpleType.INT_VALUE);
 
         // String formats
         typeMapping.put("string|uri", "anyURI");
-        typeMapping.put("string|email", XSD_STRING);
-        typeMapping.put("string|phone", XSD_STRING);
-        typeMapping.put("string|date-time", XSD_DATETIME);
-        typeMapping.put("string|date", XSD_DATE);
-        typeMapping.put("string|time", XSD_TIME);
-        typeMapping.put("string|utc-millisec", XSD_LONG);
-        typeMapping.put("string|regex", XSD_STRING);
-        typeMapping.put("string|color", XSD_STRING);
-        typeMapping.put("string|style", XSD_STRING);
+        typeMapping.put("string|email", XsdSimpleType.STRING_VALUE);
+        typeMapping.put("string|phone", XsdSimpleType.STRING_VALUE);
+        typeMapping.put("string|date-time", XsdSimpleType.DATETIME_VALUE);
+        typeMapping.put("string|date", XsdSimpleType.DATE_VALUE);
+        typeMapping.put("string|time", XsdSimpleType.TIME_VALUE);
+        typeMapping.put("string|utc-millisec", XsdSimpleType.LONG_VALUE);
+        typeMapping.put("string|regex", XsdSimpleType.STRING_VALUE);
+        typeMapping.put("string|color", XsdSimpleType.STRING_VALUE);
+        typeMapping.put("string|style", XsdSimpleType.STRING_VALUE);
     }
-    
-    private Jsons2Xsd(){}
+
+    private Jsons2Xsd()
+    {
+    }
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -133,13 +116,14 @@ public class Jsons2Xsd
         final Set<String> neededElements = new LinkedHashSet<>();
 
         final String type = rootNode.path("type").textValue();
+        Assert.notNull(type, "type property of root node must be defined");
         switch (type)
         {
-            case JSON_OBJECT:
+            case JsonComplexType.OBJECT_VALUE:
                 handleObjectSchema(cfg, rootNode, schemaRoot, neededElements);
                 break;
 
-            case JSON_ARRAY:
+            case JsonComplexType.ARRAY_VALUE:
                 handleArraySchema(cfg, rootNode, schemaRoot, neededElements);
                 break;
 
@@ -164,7 +148,7 @@ public class Jsons2Xsd
         {
             XmlUtil.validateSchema(schemaRoot.getOwnerDocument());
         }
-        
+
         return schemaRoot.getOwnerDocument();
     }
 
@@ -172,7 +156,7 @@ public class Jsons2Xsd
     {
         final JsonNode items = rootNode.path(FIELD_ITEMS);
         Assert.notNull(items, "\"items\" property should be found in root of an array schema\"");
-        
+
         final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot);
 
         if (!items.isArray())
@@ -253,19 +237,19 @@ public class Jsons2Xsd
                 final Element type = element(schemaComplexType, XSD_ATTRIBUTE);
 
                 href.setAttribute(FIELD_NAME, "href");
-                href.setAttribute("type", XSD_STRING);
+                href.setAttribute("type", XsdSimpleType.STRING_VALUE);
 
                 rel.setAttribute(FIELD_NAME, "rel");
-                rel.setAttribute("type", XSD_STRING);
+                rel.setAttribute("type", XsdSimpleType.STRING_VALUE);
 
                 title.setAttribute(FIELD_NAME, "title");
-                title.setAttribute("type", XSD_STRING);
+                title.setAttribute("type", XsdSimpleType.STRING_VALUE);
 
                 method.setAttribute(FIELD_NAME, "method");
-                method.setAttribute("type", XSD_STRING);
+                method.setAttribute("type", XsdSimpleType.STRING_VALUE);
 
                 type.setAttribute(FIELD_NAME, "type");
-                type.setAttribute("type", XSD_STRING);
+                type.setAttribute("type", XsdSimpleType.STRING_VALUE);
             }
             else
             {
@@ -273,16 +257,20 @@ public class Jsons2Xsd
             }
         }
     }
-    
+
     private static void handleObject(Set<String> neededElements, String key, Element elem, JsonNode node, Config cfg)
     {
         final JsonNode properties = node.get(FIELD_PROPERTIES);
         if (properties != null)
         {
             final Element complexType = element(elem, XSD_COMPLEXTYPE);
-            complexType.setAttribute(FIELD_NAME, key);
+            final boolean parentIsElement = elem.getNodeName().equals(XSD_ELEMENT);
+            if (! parentIsElement)
+            {
+                complexType.setAttribute(FIELD_NAME, key);
+            }
             final Element schemaSequence = element(complexType, XSD_SEQUENCE);
-            
+
             doIterate(neededElements, schemaSequence, properties, getRequiredList(node), cfg);
         }
         else if (node.get("oneOf") != null)
@@ -336,7 +324,7 @@ public class Jsons2Xsd
 
     private static void doIterateSingle(Set<String> neededElements, String name, JsonNode val, Element elem, boolean required, Config cfg)
     {
-        final String xsdType = determineXsdType(name, val);
+        final String xsdType = determineXsdType(cfg, name, val);
         final Element nodeElem = element(elem, XSD_ELEMENT);
 
         nodeElem.setAttribute(FIELD_NAME, name);
@@ -359,8 +347,8 @@ public class Jsons2Xsd
                 handleArray(neededElements, nodeElem, val, cfg);
                 break;
 
-            case XSD_DECIMAL:
-            case XSD_INT:
+            case XsdSimpleType.DECIMAL_VALUE:
+            case XsdSimpleType.INT_VALUE:
                 handleNumber(nodeElem, xsdType, val);
                 break;
 
@@ -372,7 +360,7 @@ public class Jsons2Xsd
                 handleObject(neededElements, name, nodeElem, val, cfg);
                 break;
 
-            case XSD_STRING:
+            case XsdSimpleType.STRING_VALUE:
                 handleString(nodeElem, val);
                 break;
 
@@ -412,7 +400,7 @@ public class Jsons2Xsd
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
             final Element restriction = element(simpleType, XSD_RESTRICTION);
-            restriction.setAttribute("base", XSD_STRING);
+            restriction.setAttribute("base", XsdSimpleType.STRING_VALUE);
 
             if (minimumLength != null)
             {
@@ -439,7 +427,7 @@ public class Jsons2Xsd
         nodeElem.removeAttribute("type");
         final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
         final Element restriction = element(simpleType, XSD_RESTRICTION);
-        restriction.setAttribute("base", XSD_STRING);
+        restriction.setAttribute("base", XsdSimpleType.STRING_VALUE);
         final JsonNode enumNode = val.get("enum");
         for (int i = 0; i < enumNode.size(); i++)
         {
@@ -478,7 +466,7 @@ public class Jsons2Xsd
     private static void handleArray(Set<String> neededElements, Element nodeElem, JsonNode jsonNode, Config cfg)
     {
         final JsonNode arrItems = jsonNode.path("items");
-        final String arrayXsdType = determineXsdType(arrItems.path("type").textValue(), arrItems);
+        final String arrayXsdType = determineXsdType(cfg, arrItems.path("type").textValue(), arrItems);
         final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
         final Element sequence = element(complexType, XSD_SEQUENCE);
         final Element arrElem = element(sequence, XSD_ELEMENT);
@@ -491,7 +479,7 @@ public class Jsons2Xsd
         {
             handleReference(neededElements, arrElem, arrItems, cfg);
         }
-        else if (arrayXsdType.equals(JSON_OBJECT))
+        else if (arrayXsdType.equals(JsonComplexType.OBJECT_VALUE))
         {
             handleObject(neededElements, null, arrElem, arrItems, cfg);
         }
@@ -510,7 +498,7 @@ public class Jsons2Xsd
         arrElem.setAttribute("maxOccurs", maxItems != null ? Integer.toString(maxItems) : "unbounded");
     }
 
-    private static String determineXsdType(String key, JsonNode node)
+    private static String determineXsdType(final Config cfg, String key, JsonNode node)
     {
         final String jsonType = node.path("type").textValue();
         final String jsonFormat = node.path("format").textValue();
@@ -524,14 +512,48 @@ public class Jsons2Xsd
         {
             return TYPE_ENUM;
         }
-        else
+        else if (jsonType.equalsIgnoreCase(JsonComplexType.OBJECT_VALUE))
         {
-            Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
-            final String xsdType = getType(jsonType, jsonFormat);
-            Assert.notNull(xsdType, "Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+            return XsdComplexType.OBJECT_VALUE;
+        }
+        else if (jsonType.equalsIgnoreCase(JsonComplexType.ARRAY_VALUE))
+        {
+            return XsdComplexType.ARRAY_VALUE;
+        }
+
+        Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
+
+        // Check built-in
+        String xsdType = getType(jsonType, jsonFormat);
+        if (xsdType != null)
+        {
             return xsdType;
         }
 
+        // Check cusom mapping in config
+        xsdType = cfg.getType(jsonType, jsonFormat);
+        if (xsdType != null)
+        {
+            return xsdType;
+        }
+
+        // Check for non-json mappings
+        final Optional<Entry<String, String>> mapping = cfg.getTypeMapping()
+                .entrySet()
+                .stream()
+                .filter(e->e.getKey().startsWith(jsonType + "|"))
+                .findFirst();
+        if (mapping.isPresent() && (isFormatMatch(mapping.get().getKey(), jsonType, jsonFormat) || cfg.isIgnoreUnknownFormats()))
+        {
+            return mapping.get().getValue();
+        }
+
+        throw new IllegalArgumentException("Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+    }
+
+    private static boolean isFormatMatch(final String key, final String jsonType, final String jsonFormat)
+    {
+        return key.equalsIgnoreCase(jsonType + "|" + jsonFormat);
     }
 
     private static Integer getIntVal(JsonNode node, String attribute)

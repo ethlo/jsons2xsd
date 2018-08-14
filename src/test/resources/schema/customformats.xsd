@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns:x="http://ethlo.com/schema/custom-test-1.0.xsd" elementFormDefault="qualified" targetNamespace="http://ethlo.com/schema/custom-test-1.0.xsd" xmlns="http://www.w3.org/2001/XMLSchema">
+    <complexType name="custom">
+        <sequence>
+            <element minOccurs="0" name="User">
+                <complexType>
+                    <sequence>
+                        <element minOccurs="0" name="id" type="long"/>
+                        <element minOccurs="0" name="age" type="int"/>
+                        <element minOccurs="0" name="ref" type="string"/>
+                        <element minOccurs="0" name="foo" type="string"/>
+                        <element minOccurs="0" name="key" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+</schema>
