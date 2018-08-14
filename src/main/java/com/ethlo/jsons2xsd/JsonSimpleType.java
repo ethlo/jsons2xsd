@@ -9,6 +9,18 @@ public enum JsonSimpleType
     public static final String BOOLEAN_VALUE = BOOLEAN.value();
     public static final String INTEGER_VALUE = INTEGER.value();
 
+    public static JsonSimpleType find(final String jsonType)
+    {
+        try
+        {
+            return valueOf(jsonType.toUpperCase());
+        }
+        catch (IllegalArgumentException exc)
+        {
+            return null;
+        }
+    }
+
     public String value()
     {
         return this.toString().toLowerCase();

@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.w3c.dom.Document;
@@ -82,12 +83,6 @@ public class Jsons2Xsd
         typeMapping.put(JsonSimpleType.NUMBER_VALUE, XsdSimpleType.DECIMAL_VALUE);
         typeMapping.put(JsonSimpleType.BOOLEAN_VALUE, XsdSimpleType.BOOLEAN_VALUE);
         typeMapping.put(JsonSimpleType.INTEGER_VALUE, XsdSimpleType.INT_VALUE);
-
-        // Non-standard, often encountered in the wild
-        typeMapping.put("int", XsdSimpleType.INT_VALUE);
-        typeMapping.put("date-time", XsdSimpleType.DATETIME_VALUE);
-        typeMapping.put("time", XsdSimpleType.TIME_VALUE);
-        typeMapping.put("date", XsdSimpleType.DATE_VALUE);
 
         // String formats
         typeMapping.put("string|uri", "anyURI");
@@ -269,7 +264,11 @@ public class Jsons2Xsd
         if (properties != null)
         {
             final Element complexType = element(elem, XSD_COMPLEXTYPE);
-            complexType.setAttribute(FIELD_NAME, key);
+            final boolean parentIsElement = elem.getNodeName().equals(XSD_ELEMENT);
+            if (! parentIsElement)
+            {
+                complexType.setAttribute(FIELD_NAME, key);
+            }
             final Element schemaSequence = element(complexType, XSD_SEQUENCE);
 
             doIterate(neededElements, schemaSequence, properties, getRequiredList(node), cfg);
@@ -513,18 +512,48 @@ public class Jsons2Xsd
         {
             return TYPE_ENUM;
         }
-        else
+        else if (jsonType.equalsIgnoreCase(JsonType.OBJECT_VALUE))
         {
-            Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
-            String xsdType = getType(jsonType, jsonFormat);
-            if (xsdType == null)
-            {
-                xsdType = cfg.getType(jsonType, jsonFormat);
-            }
-            Assert.notNull(xsdType, "Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+            return XsdType.OBJECT_VALUE;
+        }
+        else if (jsonType.equalsIgnoreCase(JsonType.ARRAY_VALUE))
+        {
+            return XsdType.ARRAY_VALUE;
+        }
+
+        Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
+
+        // Check built-in
+        String xsdType = getType(jsonType, jsonFormat);
+        if (xsdType != null)
+        {
             return xsdType;
         }
 
+        // Check cusom mapping in config
+        xsdType = cfg.getType(jsonType, jsonFormat);
+        if (xsdType != null)
+        {
+            return xsdType;
+        }
+
+        // Check for non-json mappings
+        final Optional<Entry<String, String>> mapping = cfg.getTypeMapping()
+                .entrySet()
+                .stream()
+                .filter(e->e.getKey().startsWith(jsonType + "|"))
+                .findFirst();
+        if (mapping.isPresent() && (isFormatMatch(mapping.get().getKey(), jsonType, jsonFormat) || cfg.isIgnoreUnknownFormats()))
+        {
+            return mapping.get().getValue();
+        }
+
+        throw new IllegalArgumentException("Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+    }
+
+    private static boolean isFormatMatch(final String key, final String jsonType, final String jsonFormat)
+    {
+        return key.equalsIgnoreCase(jsonType + "|" + jsonFormat);
     }
 
     private static Integer getIntVal(JsonNode node, String attribute)

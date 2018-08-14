@@ -39,6 +39,7 @@ public class Config
     private final boolean includeOnlyUsedTypes;
     private final boolean validateXsdSchema;
     private final Map<String, String> typeMapping;
+    private final boolean ignoreUnknownFormats;
 
     public boolean isAttributesQualified()
     {
@@ -75,6 +76,16 @@ public class Config
         return validateXsdSchema;
     }
 
+    public Map<String, String> getTypeMapping()
+    {
+        return typeMapping;
+    }
+
+    public boolean isIgnoreUnknownFormats()
+    {
+        return ignoreUnknownFormats;
+    }
+
     public String getType(String type, String format)
     {
         final String key = (type + (format != null ? ("|" + format) : "")).toLowerCase();
@@ -91,6 +102,7 @@ public class Config
         private boolean includeOnlyUsedTypes = false;
         private boolean validateXsdSchema = true;
         private final Map<String, String> typeMapping = new HashMap<>();
+        private boolean ignoreUnknownFormats;
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -147,6 +159,23 @@ public class Config
             typeMapping.put(jsonSimpleType.value() + "|" + format, xsdSimpleType.value());
             return this;
         }
+
+        public Builder nonJsonTypeMapping(final String nonJsonType, final XsdSimpleType xsdSimpleType)
+        {
+            return nonJsonTypeMapping(nonJsonType, null, xsdSimpleType);
+        }
+
+        public Builder nonJsonTypeMapping(final String nonJsonType, final String format, final XsdSimpleType xsdSimpleType)
+        {
+            typeMapping.put(nonJsonType + "|" + format, xsdSimpleType.value());
+            return this;
+        }
+
+        public Builder ignoreUnknownFormats(final boolean b)
+        {
+            this.ignoreUnknownFormats = b;
+            return this;
+        }
     }
     
     private Config(Builder builder)
@@ -159,5 +188,6 @@ public class Config
         this.includeOnlyUsedTypes = builder.includeOnlyUsedTypes;
         this.validateXsdSchema = builder.validateXsdSchema;
         this.typeMapping = builder.typeMapping;
+        this.ignoreUnknownFormats = builder.ignoreUnknownFormats;
     }
 }

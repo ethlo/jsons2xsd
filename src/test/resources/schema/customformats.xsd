@@ -5,6 +5,9 @@
                 <complexType>
                     <sequence>
                         <element minOccurs="0" name="id" type="long"/>
+                        <element minOccurs="0" name="age" type="int"/>
+                        <element minOccurs="0" name="ref" type="string"/>
+                        <element minOccurs="0" name="foo" type="string"/>
                         <element minOccurs="0" name="key" type="string" />
                     </sequence>
                 </complexType>
