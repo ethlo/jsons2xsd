@@ -104,3 +104,32 @@ try (final Reader r = ...)
   </complexType>
 </schema>
 ```
+
+## Support for non-standard types and formats
+
+### Ignore unknown JSON formats
+```java
+final Config cfg = new Config.Builder()
+    .ignoreUnknownFormats(true)
+    ...
+    .build();
+```      
+
+### Register custom JSON formats
+```java
+final Config cfg = new Config.Builder()
+    .customTypeMapping(JsonSimpleType.INTEGER, "int64", XsdSimpleType.LONG)
+    .customTypeMapping(JsonSimpleType.INTEGER, "int32", XsdSimpleType.INT)
+    .customTypeMapping(JsonSimpleType.STRING, "ext-ref", XsdSimpleType.STRING)
+    ...
+    .build();
+```
+
+### Register non-JSON types
+```java
+final Config cfg = new Config.Builder()
+    .nonJsonTypeMapping("date-time", XsdSimpleType.DATE_TIME)
+    .nonJsonTypeMapping("int", XsdSimpleType.INT)
+    ...
+    .build();
+```
