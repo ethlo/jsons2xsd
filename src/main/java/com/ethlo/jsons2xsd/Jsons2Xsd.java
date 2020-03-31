@@ -253,7 +253,9 @@ public class Jsons2Xsd
             }
             else
             {
-                handleObject(neededElements, key, elem, val, cfg);
+                final String xsdType = determineXsdType(cfg, key, val);
+                handleContent(neededElements, key, val, cfg, xsdType, elem);
+                ((Element)elem.getLastChild()).setAttribute(FIELD_NAME, key);
             }
         }
     }
@@ -264,11 +266,6 @@ public class Jsons2Xsd
         if (properties != null)
         {
             final Element complexType = element(elem, XSD_COMPLEXTYPE);
-            final boolean parentIsElement = elem.getNodeName().equals(XSD_ELEMENT);
-            if (! parentIsElement)
-            {
-                complexType.setAttribute(FIELD_NAME, key);
-            }
             final Element schemaSequence = element(complexType, XSD_SEQUENCE);
 
             doIterate(neededElements, schemaSequence, properties, getRequiredList(node), cfg);
@@ -341,6 +338,10 @@ public class Jsons2Xsd
             nodeElem.setAttribute("minOccurs", "0");
         }
 
+        handleContent(neededElements, name, val, cfg, xsdType, nodeElem);
+    }
+
+    private static void handleContent(Set<String> neededElements, String name, JsonNode val, Config cfg, String xsdType, Element nodeElem) {
         switch (xsdType)
         {
             case XSD_ARRAY:
@@ -504,6 +505,7 @@ public class Jsons2Xsd
         final String jsonFormat = node.path("format").textValue();
         final boolean isEnum = node.get(TYPE_ENUM) != null;
         final boolean isRef = node.get(JSON_REF) != null;
+        final boolean hasProperties = node.get(FIELD_PROPERTIES) != null;
         if (isRef)
         {
             return TYPE_REFERENCE;
@@ -512,7 +514,7 @@ public class Jsons2Xsd
         {
             return TYPE_ENUM;
         }
-        else if (jsonType.equalsIgnoreCase(JsonComplexType.OBJECT_VALUE))
+        else if (hasProperties || jsonType.equalsIgnoreCase(JsonComplexType.OBJECT_VALUE))
         {
             return XsdComplexType.OBJECT_VALUE;
         }

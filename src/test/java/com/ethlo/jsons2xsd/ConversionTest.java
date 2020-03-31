@@ -197,6 +197,22 @@ public class ConversionTest
         assertThat(actual).isXmlEqualTo(expected);
     }
 
+    @Test
+    public void testSimpleTypeRefs() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/simple-type-refs.json"))
+        {
+            final Config cfg = new Config.Builder()
+                    .createRootElement(true)
+                    .targetNamespace("http://ethlo.com/schema/dog-test-1.0.xsd")
+                    .name("dog")
+                    .validateXsdSchema(true)
+                    .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/simple-type-refs.xsd"));
+        }
+    }
+
     private Reader reader(String path)
     {
         return new InputStreamReader(getClass().getResourceAsStream(path));
