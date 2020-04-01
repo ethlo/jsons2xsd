@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+        targetNamespace="http://ethlo.com/schema/dog-test-1.0.xsd"
+        xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/dog-test-1.0.xsd">
+  <element name="dog" type="x:dog"/>
+  <complexType name="dog">
+    <sequence>
+      <element minOccurs="0" name="name" type="string"/>
+      <element minOccurs="0" name="breed" type="x:Breed"/>
+      <element minOccurs="0" name="age" type="x:Age"/>
+    </sequence>
+  </complexType>
+  <simpleType name="Age">
+    <restriction base="int">
+      <minInclusive value="0"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="Breed">
+    <restriction base="string">
+      <enumeration value="LABRADOR"/>
+      <enumeration value="BULLDOG"/>
+      <enumeration value="YORKSHIRE"/>
+    </restriction>
+  </simpleType>
+</schema>

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name":  { "type": "string" },
+    "breed": { "$ref": "#/definitions/Breed" },
+    "age":  { "$ref": "#/definitions/Age" }
+  },
+  "definitions": {
+    "Age": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "Breed": {
+      "type": "string",
+      "enum": [ "LABRADOR", "BULLDOG", "YORKSHIRE"]
+    }
+  }
+}
