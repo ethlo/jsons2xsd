@@ -5,11 +5,15 @@
   <element name="dog" type="x:dog"/>
   <complexType name="dog">
     <sequence>
-      <element minOccurs="0" name="name" type="string"/>
+      <element minOccurs="0" name="name" type="x:Name"/>
       <element minOccurs="0" name="breed" type="x:Breed"/>
       <element minOccurs="0" name="age" type="x:Age"/>
+      <element minOccurs="0" name="birthDate" type="x:Date"/>
     </sequence>
   </complexType>
+  <simpleType name="Name">
+    <restriction base="string"/>
+  </simpleType>
   <simpleType name="Age">
     <restriction base="int">
       <minInclusive value="0"/>
@@ -21,5 +25,8 @@
       <enumeration value="BULLDOG"/>
       <enumeration value="YORKSHIRE"/>
     </restriction>
+  </simpleType>
+  <simpleType name="Date">
+    <restriction base="date"/>
   </simpleType>
 </schema>

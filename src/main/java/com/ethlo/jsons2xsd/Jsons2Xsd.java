@@ -370,6 +370,11 @@ public class Jsons2Xsd
                 break;
 
             default:
+                if (nodeElem.getNodeName().equals("schema")) {
+                    final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
+                    final Element restriction = element(simpleType, XSD_RESTRICTION);
+                    restriction.setAttribute("base", xsdType);
+                }
         }
     }
 
@@ -396,7 +401,7 @@ public class Jsons2Xsd
         final Integer maximumLength = getIntVal(val, "maxLength");
         final String expression = val.path("pattern").textValue();
 
-        if (minimumLength != null || maximumLength != null || expression != null)
+        if (minimumLength != null || maximumLength != null || expression != null || nodeElem.getNodeName().equals("schema"))
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
@@ -443,7 +448,7 @@ public class Jsons2Xsd
         final Integer minimum = getIntVal(jsonNode, "minimum");
         final Integer maximum = getIntVal(jsonNode, "maximum");
 
-        if (minimum != null || maximum != null)
+        if (minimum != null || maximum != null || nodeElem.getNodeName().equals("schema"))
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
