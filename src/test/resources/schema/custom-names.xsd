@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+		targetNamespace="http://ethlo.com/schema/group-test-1.0.xsd"
+		xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/group-test-1.0.xsd">
+	<element name="group" type="x:Group"/>
+	<complexType name="Group">
+		<sequence>
+			<element minOccurs="0" name="name" type="string"/>
+			<element minOccurs="0" name="permissions">
+				<complexType>
+					<sequence>
+						<element maxOccurs="unbounded" minOccurs="0"
+								 name="item" type="string"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element minOccurs="0" name="members">
+				<complexType>
+					<sequence>
+						<element maxOccurs="unbounded" minOccurs="0"
+								 name="PERSON" type="x:Person"/>
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="Person">
+		<sequence>
+			<element minOccurs="0" name="name" type="string"/>
+		</sequence>
+	</complexType>
+</schema>

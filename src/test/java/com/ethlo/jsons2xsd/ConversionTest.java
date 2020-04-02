@@ -213,6 +213,24 @@ public class ConversionTest
         }
     }
 
+    @Test
+    public void testCustomNames() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/custom-names.json"))
+        {
+            final Config cfg = new Config.Builder()
+                    .createRootElement(true)
+                    .targetNamespace("http://ethlo.com/schema/group-test-1.0.xsd")
+                    .name("Group")
+                    .rootElement("group")
+                    .mapArrayItemNames( name -> name.toUpperCase() )
+                    .validateXsdSchema(true)
+                    .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/custom-names.xsd"));
+        }
+    }
+
     private Reader reader(String path)
     {
         return new InputStreamReader(getClass().getResourceAsStream(path));
