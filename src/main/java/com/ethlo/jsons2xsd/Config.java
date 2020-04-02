@@ -28,6 +28,7 @@ package com.ethlo.jsons2xsd;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Config
 {
@@ -40,6 +41,8 @@ public class Config
     private final boolean validateXsdSchema;
     private final Map<String, String> typeMapping;
     private final boolean ignoreUnknownFormats;
+    private final String rootElement;
+    private final Function<String,String> itemNameMapper;
 
     public boolean isAttributesQualified()
     {
@@ -68,7 +71,7 @@ public class Config
 
     public boolean isCreateRootElement()
     {
-        return createRootElement;
+        return createRootElement || rootElement != null;
     }
 
     public boolean isValidateXsdSchema()
@@ -84,6 +87,14 @@ public class Config
     public boolean isIgnoreUnknownFormats()
     {
         return ignoreUnknownFormats;
+    }
+
+    public String getRootElement() {
+        return rootElement != null ? rootElement : name;
+    }
+
+    public Function<String,String> getItemNameMapper() {
+        return itemNameMapper;
     }
 
     public String getType(String type, String format)
@@ -103,6 +114,8 @@ public class Config
         private boolean validateXsdSchema = true;
         private final Map<String, String> typeMapping = new HashMap<>();
         private boolean ignoreUnknownFormats;
+        private String rootElement;
+        private Function<String,String> itemNameMapper = Function.identity();
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -176,6 +189,16 @@ public class Config
             this.ignoreUnknownFormats = b;
             return this;
         }
+
+        public Builder rootElement(final String name) {
+            this.rootElement = name;
+            return this;
+        }
+
+        public Builder mapArrayItemNames(final Function<String, String> mapper) {
+            this.itemNameMapper = mapper;
+            return this;
+        }
     }
     
     private Config(Builder builder)
@@ -189,5 +212,7 @@ public class Config
         this.validateXsdSchema = builder.validateXsdSchema;
         this.typeMapping = builder.typeMapping;
         this.ignoreUnknownFormats = builder.ignoreUnknownFormats;
+        this.rootElement = builder.rootElement;
+        this.itemNameMapper = builder.itemNameMapper;
     }
 }

@@ -175,7 +175,7 @@ public class Jsons2Xsd
         if (cfg.isCreateRootElement())
         {
             final Element wrapper = element(schemaRoot, XSD_ELEMENT);
-            wrapper.setAttribute(FIELD_NAME, cfg.getName());
+            wrapper.setAttribute(FIELD_NAME, cfg.getRootElement());
             wrapper.setAttribute("type", cfg.getNsAlias() + ":" + cfg.getName());
         }
 
@@ -388,7 +388,7 @@ public class Jsons2Xsd
 
         if (oldName.length() <= 0)
         {
-            nodeElem.setAttribute(FIELD_NAME, name);
+            nodeElem.setAttribute(FIELD_NAME, cfg.getItemNameMapper().apply(name));
         }
         nodeElem.setAttribute("type", fixRef);
 
