@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+        targetNamespace="http://ethlo.com/schema/dog-test-1.0.xsd"
+        xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/dog-test-1.0.xsd">
+  <element name="dog" type="x:dog"/>
+  <complexType name="dog">
+    <annotation>
+      <documentation>Your best friend</documentation>
+    </annotation>
+    <sequence>
+      <element minOccurs="0" name="name" type="string">
+        <annotation>
+          <documentation>How to call the dog</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="age">
+        <annotation>
+          <documentation>Number of years ( &gt; 0 )</documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="int">
+            <minInclusive value="0"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element minOccurs="0" name="owner" type="x:Person">
+        <annotation>
+          <documentation>The person taking care of the dog</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="breed" type="x:Breed">
+        <annotation>
+          <documentation>The breed if pure</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="Person">
+    <annotation>
+      <documentation>A human being</documentation>
+    </annotation>
+    <sequence>
+      <element minOccurs="0" name="name" type="string"/>
+    </sequence>
+  </complexType>
+  <simpleType name="Breed">
+    <annotation>
+      <documentation>Most popular breeds</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="LABRADOR"/>
+      <enumeration value="BULLDOG"/>
+      <enumeration value="YORKSHIRE"/>
+    </restriction>
+  </simpleType>
+</schema>

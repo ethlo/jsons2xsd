@@ -213,6 +213,22 @@ public class ConversionTest
         }
     }
 
+    @Test
+    public void testAnnotations() throws IOException, TransformerException
+    {
+        try (final Reader r = reader("/schema/annotations.json"))
+        {
+            final Config cfg = new Config.Builder()
+                    .createRootElement(true)
+                    .targetNamespace("http://ethlo.com/schema/dog-test-1.0.xsd")
+                    .name("dog")
+                    .validateXsdSchema(true)
+                    .build();
+            final Document doc = Jsons2Xsd.convert(r, cfg);
+            assertThat(XmlUtil.asXmlString(doc.getDocumentElement())).isXmlEqualTo(load("schema/annotations.xsd"));
+        }
+    }
+
     private Reader reader(String path)
     {
         return new InputStreamReader(getClass().getResourceAsStream(path));

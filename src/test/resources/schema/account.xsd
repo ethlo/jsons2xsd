@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema elementFormDefault="qualified"
-    targetNamespace="http://cableapi.cablelabs.com/schemas/v1/Account"
-    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:account="http://cableapi.cablelabs.com/schemas/v1/Account">
+        targetNamespace="http://cableapi.cablelabs.com/schemas/v1/Account"
+        xmlns="http://www.w3.org/2001/XMLSchema" xmlns:account="http://cableapi.cablelabs.com/schemas/v1/Account">
     <element name="Account" type="account:Account"/>
     <complexType name="Account">
         <sequence>
@@ -10,6 +10,9 @@
             <element minOccurs="0" name="accountNumber" type="string"/>
             <element minOccurs="0" name="name" type="string"/>
             <element minOccurs="0" name="type">
+                <annotation>
+                    <documentation>Individual, Joint, Other</documentation>
+                </annotation>
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="Individual"/>
@@ -20,6 +23,9 @@
             </element>
             <element minOccurs="0" name="pin" type="int"/>
             <element minOccurs="0" name="status">
+                <annotation>
+                    <documentation>Active, Suspended, Inactive, Closed</documentation>
+                </annotation>
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="Active"/>
@@ -30,6 +36,9 @@
                 </simpleType>
             </element>
             <element minOccurs="0" name="financialStatus">
+                <annotation>
+                    <documentation>Current, Due ,InArrears, Delinquent</documentation>
+                </annotation>
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="Current"/>
@@ -47,7 +56,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="UserSummary" type="account:UserSummary"/>
+                                 name="UserSummary" type="account:UserSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -58,7 +67,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="ProductSummary" type="account:ProductSummary"/>
+                                 name="ProductSummary" type="account:ProductSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -66,7 +75,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="DeviceSummary" type="account:DeviceSummary"/>
+                                 name="DeviceSummary" type="account:DeviceSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -75,7 +84,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="SiteSummary" type="account:SiteSummary"/>
+                                 name="SiteSummary" type="account:SiteSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -83,7 +92,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="PreferenceSummary" type="account:PreferenceSummary"/>
+                                 name="PreferenceSummary" type="account:PreferenceSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -91,7 +100,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="AccountSummary" type="account:AccountSummary"/>
+                                 name="AccountSummary" type="account:AccountSummary"/>
                     </sequence>
                 </complexType>
             </element>
@@ -173,6 +182,9 @@
             <element name="clliCode" type="string"/>
             <element name="siteHours" type="string"/>
             <element name="status">
+                <annotation>
+                    <documentation>Active, Off, Pending</documentation>
+                </annotation>
                 <simpleType>
                     <restriction base="string">
                         <enumeration value="Active"/>
@@ -243,7 +255,7 @@
                 <complexType>
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
-                            name="PropertyAddress" type="account:PropertyAddress"/>
+                                 name="PropertyAddress" type="account:PropertyAddress"/>
                     </sequence>
                 </complexType>
             </element>

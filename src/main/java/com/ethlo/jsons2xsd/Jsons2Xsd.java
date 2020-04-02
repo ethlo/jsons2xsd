@@ -157,7 +157,7 @@ public class Jsons2Xsd
         final JsonNode items = rootNode.path(FIELD_ITEMS);
         Assert.notNull(items, "\"items\" property should be found in root of an array schema\"");
 
-        final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot);
+        final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot, rootNode);
 
         if (!items.isArray())
         {
@@ -170,7 +170,7 @@ public class Jsons2Xsd
         }
     }
 
-    private static Element createRootElementIfNeeded(Config cfg, Element schemaRoot)
+    private static Element createRootElementIfNeeded(Config cfg, Element schemaRoot, JsonNode rootNode)
     {
         if (cfg.isCreateRootElement())
         {
@@ -181,6 +181,7 @@ public class Jsons2Xsd
 
         final Element schemaComplexType = element(schemaRoot, XSD_COMPLEXTYPE);
         schemaComplexType.setAttribute(FIELD_NAME, cfg.getName());
+        addDocumentation(schemaComplexType, rootNode);
 
         return element(schemaComplexType, XSD_SEQUENCE);
     }
@@ -191,7 +192,7 @@ public class Jsons2Xsd
         properties = rootNode.get(FIELD_PROPERTIES);
         Assert.notNull(properties, "\"properties\" property should be found in root of JSON schema\"");
 
-        final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot);
+        final Element schemaSequence = createRootElementIfNeeded(cfg, schemaRoot, rootNode);
 
         doIterate(neededElements, schemaSequence, properties, getRequiredList(rootNode), cfg);
     }
@@ -266,6 +267,7 @@ public class Jsons2Xsd
         if (properties != null)
         {
             final Element complexType = element(elem, XSD_COMPLEXTYPE);
+            addDocumentation(complexType, node);
             final Element schemaSequence = element(complexType, XSD_SEQUENCE);
 
             doIterate(neededElements, schemaSequence, properties, getRequiredList(node), cfg);
@@ -323,7 +325,7 @@ public class Jsons2Xsd
     {
         final String xsdType = determineXsdType(cfg, name, val);
         final Element nodeElem = element(elem, XSD_ELEMENT);
-
+        addDocumentation(nodeElem, val);
         nodeElem.setAttribute(FIELD_NAME, name);
 
         if (!XSD_OBJECT.equals(xsdType) && !XSD_ARRAY.equals(xsdType))
@@ -405,6 +407,7 @@ public class Jsons2Xsd
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
+            addDocumentation(simpleType, val);
             final Element restriction = element(simpleType, XSD_RESTRICTION);
             restriction.setAttribute("base", XsdSimpleType.STRING_VALUE);
 
@@ -432,6 +435,7 @@ public class Jsons2Xsd
     {
         nodeElem.removeAttribute("type");
         final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
+        addDocumentation(simpleType, val);
         final Element restriction = element(simpleType, XSD_RESTRICTION);
         restriction.setAttribute("base", XsdSimpleType.STRING_VALUE);
         final JsonNode enumNode = val.get("enum");
@@ -452,6 +456,7 @@ public class Jsons2Xsd
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
+            addDocumentation(simpleType, jsonNode);
             final Element restriction = element(simpleType, XSD_RESTRICTION);
             restriction.setAttribute("base", xsdType);
 
@@ -556,6 +561,16 @@ public class Jsons2Xsd
         }
 
         throw new IllegalArgumentException("Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
+    }
+
+    private static void addDocumentation(Element element, JsonNode node) {
+        final JsonNode description = node.get("description");
+        final boolean parentIsElement = element.getParentNode().getNodeName().equals(XSD_ELEMENT);
+        if(description != null && !parentIsElement) {
+            final Element annotation = element(element, "annotation");
+            final Element documentation = element(annotation, "documentation");
+            documentation.setTextContent(description.textValue());
+        }
     }
 
     private static boolean isFormatMatch(final String key, final String jsonType, final String jsonFormat)
