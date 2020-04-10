@@ -1,0 +1,40 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "prices": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "price"
+          ]
+        }
+      },
+      "name": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 32
+      },
+      "isExpired": {
+        "default": false,
+        "type": "boolean"
+      },
+      "manufactured": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": [
+      "prices",
+      "name",
+      "manufactured"
+    ]
+  }
+}

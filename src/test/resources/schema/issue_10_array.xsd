@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><schema elementFormDefault="qualified" targetNamespace="http://json-schema.org/example2.html" xmlns:example2="http://json-schema.org/example2.html">
+    <element name="Example2" type="example2:Example2"/>
+    <complexType name="Example2">
+        <sequence>
+            <element name="prices">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0" name="item">
+                            <complexType>
+                                <sequence>
+                                    <element name="price" type="decimal"/>
+                                </sequence>
+                            </complexType>
+                        </element>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="name">
+                <simpleType>
+                    <restriction base="string">
+                        <minLength value="5"/>
+                        <maxLength value="32"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element minOccurs="0" name="isExpired" type="boolean"/>
+            <element name="manufactured" type="dateTime"/>
+        </sequence>
+    </complexType>
+</schema>
