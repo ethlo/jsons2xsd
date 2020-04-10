@@ -29,6 +29,7 @@ package com.ethlo.jsons2xsd;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class XmlUtil
     {
     }
 
-    public static String asXmlString(Node node) throws IOException
+    public static String asXmlString(Node node)
     {
         final Source source = new DOMSource(node);
         final StringWriter stringWriter = new StringWriter();
@@ -78,7 +79,7 @@ public class XmlUtil
         }
         catch (TransformerException exc)
         {
-            throw new IOException(exc.getMessage(), exc);
+            throw new UncheckedIOException(exc.getMessage(), new IOException(exc));
         }
     }
 
@@ -117,13 +118,14 @@ public class XmlUtil
         XSOMParser parser = new XSOMParser(factory);
         final EH errorHandler = new EH();
         parser.setErrorHandler(errorHandler);
+        final String xmlString = XmlUtil.asXmlString(doc);
         try
         {
-            parser.parse(new StringReader(XmlUtil.asXmlString(doc)));
+            parser.parse(new StringReader(xmlString));
         }
-        catch (SAXException | IOException exc)
+        catch (SAXException exc)
         {
-            throw new IllegalArgumentException(exc);
+            throw new IllegalArgumentException("Invalid schema generated: " + xmlString, exc);
         }
         
         final List<SAXParseException> errors = errorHandler.getErrors();
