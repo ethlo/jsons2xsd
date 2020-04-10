@@ -5,7 +5,7 @@ jsons2xsd
 [![Coverage Status](https://coveralls.io/repos/github/ethlo/jsons2xsd/badge.svg)](https://coveralls.io/github/ethlo/jsons2xsd)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b60e8e4fd0d541c5ac669c971850316f)](https://www.codacy.com/app/ethlo/jsons2xsd?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ethlo/jsons2xsd&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/ethlo/jsons2xsd.svg)](https://travis-ci.org/ethlo/jsons2xsd)
-[![GitHub issues open](https://img.shields.io/github/issues/ethlo/jsons2xsd.svg](https://github.com/ethlo/jsons2xsd/issues)
+[![GitHub issues open](https://img.shields.io/github/issues/ethlo/jsons2xsd.svg)](https://github.com/ethlo/jsons2xsd/issues)
 
 [JSON-schema](http://json-schema.org/) to [XML schema](https://www.w3.org/TR/xmlschema11-1/) converter written in Java.
 
