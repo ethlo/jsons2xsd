@@ -39,7 +39,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>1.20</version>
+				<version>2.0.0</version>
 				<configuration>
 					<verbose>false</verbose>
 					<addSvnKeyWords>true</addSvnKeyWords>
@@ -52,17 +52,21 @@
 						</goals>
 						<phase>process-sources</phase>
 						<configuration>
+							<verbose>true</verbose>
+							<force>true</force>
 							<licenseName>mit</licenseName>
 							<inceptionYear>2014</inceptionYear>
 							<organizationName>Morten Haraldsen (ethlo)</organizationName>
 							<addSvnKeyWords>false</addSvnKeyWords>
 							<canUpdateCopyright>true</canUpdateCopyright>
+							<canUpdateDescription>true</canUpdateDescription>
+							<canUpdateLicense>true</canUpdateLicense>
 							<roots>
 								<root>src/main/java</root>
 								<root>src/test</root>
 							</roots>
 							<includes>
-								<include>*.java</include>
+								<include>**/*.java</include>
 							</includes>
 						</configuration>
 					</execution>

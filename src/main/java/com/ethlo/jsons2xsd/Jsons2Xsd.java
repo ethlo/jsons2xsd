@@ -4,7 +4,7 @@ package com.ethlo.jsons2xsd;
  * #%L
  * jsons2xsd
  * %%
- * Copyright (C) 2014 - 2017 Morten Haraldsen (ethlo)
+ * Copyright (C) 2014 - 2020 Morten Haraldsen (ethlo)
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -255,13 +255,13 @@ public class Jsons2Xsd
             else
             {
                 final String xsdType = determineXsdType(cfg, key, val);
-                handleContent(neededElements, key, val, cfg, xsdType, elem);
+                handleContent(neededElements, val, cfg, xsdType, elem);
                 ((Element)elem.getLastChild()).setAttribute(FIELD_NAME, key);
             }
         }
     }
 
-    private static void handleObject(Set<String> neededElements, String key, Element elem, JsonNode node, Config cfg)
+    private static void handleObject(Set<String> neededElements, Element elem, JsonNode node, Config cfg)
     {
         final JsonNode properties = node.get(FIELD_PROPERTIES);
         if (properties != null)
@@ -315,8 +315,7 @@ public class Jsons2Xsd
             for (JsonNode entry : node)
             {
                 final String key = String.format("item%s", i++);
-                final JsonNode val = entry;
-                doIterateSingle(neededElements, key, val, elem, requiredList.contains(key), cfg);
+                doIterateSingle(neededElements, key, entry, elem, requiredList.contains(key), cfg);
             }
         }
     }
@@ -340,10 +339,10 @@ public class Jsons2Xsd
             nodeElem.setAttribute("minOccurs", "0");
         }
 
-        handleContent(neededElements, name, val, cfg, xsdType, nodeElem);
+        handleContent(neededElements, val, cfg, xsdType, nodeElem);
     }
 
-    private static void handleContent(Set<String> neededElements, String name, JsonNode val, Config cfg, String xsdType, Element nodeElem) {
+    private static void handleContent(Set<String> neededElements, JsonNode val, Config cfg, String xsdType, Element nodeElem) {
         switch (xsdType)
         {
             case XSD_ARRAY:
@@ -360,7 +359,7 @@ public class Jsons2Xsd
                 break;
 
             case XSD_OBJECT:
-                handleObject(neededElements, name, nodeElem, val, cfg);
+                handleObject(neededElements, nodeElem, val, cfg);
                 break;
 
             case XsdSimpleType.STRING_VALUE:
@@ -388,7 +387,7 @@ public class Jsons2Xsd
         String name = fixRef.substring(cfg.getNsAlias().length() + 1);
         String oldName = nodeElem.getAttribute(FIELD_NAME);
 
-        if (oldName.length() <= 0)
+        if (oldName.trim().length() == 0)
         {
             nodeElem.setAttribute(FIELD_NAME, cfg.getItemNameMapper().apply(name));
         }
@@ -481,7 +480,14 @@ public class Jsons2Xsd
         final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
         final Element sequence = element(complexType, XSD_SEQUENCE);
         final Element arrElem = element(sequence, XSD_ELEMENT);
+
         handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, arrElem, cfg);
+
+        final String o = arrElem.getAttribute("name");
+        if (o == null || o.trim().length() == 0)
+        {
+            arrElem.setAttribute(FIELD_NAME, "item");
+        }
     }
 
     private static void handleArrayElements(Set<String> neededElements, JsonNode jsonNode, final JsonNode arrItems, final String arrayXsdType, final Element arrElem, Config cfg)
@@ -492,7 +498,7 @@ public class Jsons2Xsd
         }
         else if (arrayXsdType.equals(JsonComplexType.OBJECT_VALUE))
         {
-            handleObject(neededElements, null, arrElem, arrItems, cfg);
+            handleObject(neededElements, arrElem, arrItems, cfg);
         }
         else
         {
