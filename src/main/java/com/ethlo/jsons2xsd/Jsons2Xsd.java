@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,26 +26,17 @@ package com.ethlo.jsons2xsd;
  * #L%
  */
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Jsons2Xsd
 {
@@ -448,8 +439,8 @@ public class Jsons2Xsd
 
     private static void handleNumber(Element nodeElem, String xsdType, JsonNode jsonNode)
     {
-        final Integer minimum = getIntVal(jsonNode, "minimum");
-        final Integer maximum = getIntVal(jsonNode, "maximum");
+        final Long minimum = getLongVal(jsonNode, "minimum");
+        final Long maximum = getLongVal(jsonNode, "maximum");
 
         if (minimum != null || maximum != null || nodeElem.getNodeName().equals("schema"))
         {
@@ -457,19 +448,28 @@ public class Jsons2Xsd
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
             addDocumentation(simpleType, jsonNode);
             final Element restriction = element(simpleType, XSD_RESTRICTION);
-            restriction.setAttribute("base", xsdType);
 
+            boolean shouldBeLong = false;
             if (minimum != null)
             {
+                if (minimum < Integer.MIN_VALUE) {
+                    shouldBeLong = true;
+                }
                 final Element min = element(restriction, "minInclusive");
-                min.setAttribute(XSD_VALUE, Integer.toString(minimum));
+                min.setAttribute(XSD_VALUE, Long.toString(minimum));
             }
 
             if (maximum != null)
             {
+                if (maximum > Integer.MAX_VALUE) {
+                    shouldBeLong = true;
+                }
                 final Element max = element(restriction, "maxInclusive");
-                max.setAttribute(XSD_VALUE, Integer.toString(maximum));
+                max.setAttribute(XSD_VALUE, Long.toString(maximum));
             }
+
+            String xsdTypeToUse = shouldBeLong ? XsdSimpleType.LONG_VALUE : xsdType;
+            restriction.setAttribute("base", xsdTypeToUse);
         }
     }
 
@@ -587,6 +587,11 @@ public class Jsons2Xsd
     private static Integer getIntVal(JsonNode node, String attribute)
     {
         return node.get(attribute) != null ? node.get(attribute).intValue() : null;
+    }
+
+    private static Long getLongVal(JsonNode node, String attribute)
+    {
+        return node.get(attribute) != null ? node.get(attribute).longValue() : null;
     }
 
     private static Element element(Node element, String name)
