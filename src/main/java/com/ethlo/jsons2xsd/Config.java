@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -43,12 +43,13 @@ public class Config
     private final boolean ignoreUnknownFormats;
     private final String rootElement;
     private final Function<String,String> itemNameMapper;
+    private final boolean unwrapArrays;
 
     public boolean isAttributesQualified()
     {
         return attributesQualified;
     }
-    
+
     public boolean isIncludeOnlyUsedTypes()
     {
         return includeOnlyUsedTypes;
@@ -97,6 +98,10 @@ public class Config
         return itemNameMapper;
     }
 
+    public boolean isUnwrapArrays() {
+        return unwrapArrays;
+    }
+
     public String getType(String type, String format)
     {
         final String key = (type + (format != null ? ("|" + format) : "")).toLowerCase();
@@ -116,6 +121,7 @@ public class Config
         private boolean ignoreUnknownFormats;
         private String rootElement;
         private Function<String,String> itemNameMapper = Function.identity();
+        private boolean unwrapArrays = false;
 
         public Builder targetNamespace(String targetNamespace)
         {
@@ -134,7 +140,7 @@ public class Config
             this.createRootElement = b;
             return this;
         }
-        
+
         public Builder includeOnlyUsedTypes(boolean b)
         {
             this.includeOnlyUsedTypes = b;
@@ -145,7 +151,7 @@ public class Config
         {
             Assert.notNull(name, "name must be set");
             Assert.notNull(targetNamespace, "targetNamespace must be set");
-            
+
             return new Config(this);
         }
 
@@ -160,7 +166,7 @@ public class Config
             this.attributesQualified = b;
             return this;
         }
-        
+
         public Builder validateXsdSchema(boolean b)
         {
             this.validateXsdSchema = b;
@@ -199,8 +205,13 @@ public class Config
             this.itemNameMapper = mapper;
             return this;
         }
+
+        public Builder unwrapArrays(final boolean unwrapArrays) {
+            this.unwrapArrays = unwrapArrays;
+            return this;
+        }
     }
-    
+
     private Config(Builder builder)
     {
         this.targetNamespace = builder.targetNamespace;
@@ -214,5 +225,6 @@ public class Config
         this.ignoreUnknownFormats = builder.ignoreUnknownFormats;
         this.rootElement = builder.rootElement;
         this.itemNameMapper = builder.itemNameMapper;
+        this.unwrapArrays = builder.unwrapArrays;
     }
 }

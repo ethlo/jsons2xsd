@@ -1,0 +1,36 @@
+{
+  "definitions": {
+    "Bar": {
+      "title": "Bar",
+      "type": "object",
+      "properties": {
+        "baz": {
+          "type": "number"
+        },
+        "quokka": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "baz",
+        "quokka"
+      ]
+    }
+  },
+
+	"type": "object",
+	"properties": {
+		"Foo": {
+		  "title": "Foo",
+		  "type": "object",
+		  "properties": {
+			"uris": {
+			  "type": "array",
+			  "items": {
+			    "$ref": "#/definitions/Bar"
+			}
+	      }
+   	    }
+	  }
+  }
+}

@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,26 +26,17 @@ package com.ethlo.jsons2xsd;
  * #L%
  */
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Jsons2Xsd
 {
@@ -477,16 +468,20 @@ public class Jsons2Xsd
     {
         final JsonNode arrItems = jsonNode.path("items");
         final String arrayXsdType = determineXsdType(cfg, arrItems.path("type").textValue(), arrItems);
-        final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
-        final Element sequence = element(complexType, XSD_SEQUENCE);
-        final Element arrElem = element(sequence, XSD_ELEMENT);
+        if (cfg.isUnwrapArrays()) {
+            handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, nodeElem, cfg);
+        } else {
+            final Element complexType = element(nodeElem, XSD_COMPLEXTYPE);
+            final Element sequence = element(complexType, XSD_SEQUENCE);
+            final Element arrElem = element(sequence, XSD_ELEMENT);
 
-        handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, arrElem, cfg);
+            handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, arrElem, cfg);
 
-        final String o = arrElem.getAttribute("name");
-        if (o == null || o.trim().length() == 0)
-        {
-            arrElem.setAttribute(FIELD_NAME, "item");
+            final String o = arrElem.getAttribute("name");
+            if (o == null || o.trim().length() == 0)
+            {
+                arrElem.setAttribute(FIELD_NAME, "item");
+            }
         }
     }
 
