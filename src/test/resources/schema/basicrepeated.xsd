@@ -9,6 +9,8 @@
                     <sequence>
                         <element maxOccurs="unbounded" minOccurs="0"
                             name="uris" type="x:Bar"/>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="numbers" type="decimal"/>
                     </sequence>
                 </complexType>
             </element>

@@ -28,9 +28,13 @@
 			  "type": "array",
 			  "items": {
 			    "$ref": "#/definitions/Bar"
-			}
-	      }
-   	    }
+              }
+            },
+            "numbers": {
+              "type": "array",
+              "items": { "type":  "number"}
+            }
+   	      }
 	  }
   }
 }

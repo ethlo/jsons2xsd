@@ -497,7 +497,11 @@ public class Jsons2Xsd
         }
         else
         {
-            arrElem.setAttribute(FIELD_NAME, "item");
+            String oldName = arrElem.getAttribute(FIELD_NAME);
+            if (oldName.trim().length() == 0)
+            {
+                arrElem.setAttribute(FIELD_NAME, "item");
+            }
             arrElem.setAttribute("type", arrayXsdType);
         }
 
