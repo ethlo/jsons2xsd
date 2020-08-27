@@ -12,10 +12,10 @@ package com.ethlo.jsons2xsd;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -229,6 +229,18 @@ public class ConversionTest {
                     .validateXsdSchema(true)
                     .build();
             assertSchema(r, cfg, "schema/annotations.xsd");
+        }
+    }
+
+    @Test
+    public void testBasicRepeated() throws IOException {
+        try (final Reader r = reader("/schema/basicrepeated.json")) {
+            final Config cfg = new Config.Builder()
+                    .targetNamespace("http://ethlo.com/schema/basicrepeated.xsd")
+                    .name("basic")
+                    .unwrapArrays(true)
+                    .build();
+            assertSchema(r, cfg, "schema/basicrepeated.xsd");
         }
     }
 

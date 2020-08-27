@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="qualified"
+    targetNamespace="http://ethlo.com/schema/basicrepeated.xsd"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://ethlo.com/schema/basicrepeated.xsd">
+    <complexType name="basic">
+        <sequence>
+            <element minOccurs="0" name="Foo">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="uris" type="x:Bar"/>
+                        <element maxOccurs="unbounded" minOccurs="0"
+                            name="numbers" type="decimal"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+    <complexType name="Bar">
+        <sequence>
+            <element name="baz" type="decimal"/>
+            <element name="quokka" type="decimal"/>
+        </sequence>
+    </complexType>
+</schema>
