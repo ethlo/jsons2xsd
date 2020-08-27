@@ -439,8 +439,8 @@ public class Jsons2Xsd
 
     private static void handleNumber(Element nodeElem, String xsdType, JsonNode jsonNode)
     {
-        final Integer minimum = getIntVal(jsonNode, "minimum");
-        final Integer maximum = getIntVal(jsonNode, "maximum");
+        final Long minimum = getLongVal(jsonNode, "minimum");
+        final Long maximum = getLongVal(jsonNode, "maximum");
 
         if (minimum != null || maximum != null || nodeElem.getNodeName().equals("schema"))
         {
@@ -448,19 +448,28 @@ public class Jsons2Xsd
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
             addDocumentation(simpleType, jsonNode);
             final Element restriction = element(simpleType, XSD_RESTRICTION);
-            restriction.setAttribute("base", xsdType);
 
+            boolean shouldBeLong = false;
             if (minimum != null)
             {
+                if (minimum < Integer.MIN_VALUE) {
+                    shouldBeLong = true;
+                }
                 final Element min = element(restriction, "minInclusive");
-                min.setAttribute(XSD_VALUE, Integer.toString(minimum));
+                min.setAttribute(XSD_VALUE, Long.toString(minimum));
             }
 
             if (maximum != null)
             {
+                if (maximum > Integer.MAX_VALUE) {
+                    shouldBeLong = true;
+                }
                 final Element max = element(restriction, "maxInclusive");
-                max.setAttribute(XSD_VALUE, Integer.toString(maximum));
+                max.setAttribute(XSD_VALUE, Long.toString(maximum));
             }
+
+            String xsdTypeToUse = shouldBeLong ? XsdSimpleType.LONG_VALUE : xsdType;
+            restriction.setAttribute("base", xsdTypeToUse);
         }
     }
 
@@ -586,6 +595,11 @@ public class Jsons2Xsd
     private static Integer getIntVal(JsonNode node, String attribute)
     {
         return node.get(attribute) != null ? node.get(attribute).intValue() : null;
+    }
+
+    private static Long getLongVal(JsonNode node, String attribute)
+    {
+        return node.get(attribute) != null ? node.get(attribute).longValue() : null;
     }
 
     private static Element element(Node element, String name)

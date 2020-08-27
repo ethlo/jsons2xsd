@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><schema elementFormDefault="qualified" targetNamespace="http://json-schema.org/example2.html" xmlns:example2="http://json-schema.org/example2.html">
+<?xml version="1.0" encoding="UTF-8"?><schema elementFormDefault="qualified"
+    targetNamespace="http://json-schema.org/example2.html"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:example2="http://json-schema.org/example2.html">
     <element name="Example2" type="example2:Example2"/>
     <complexType name="Example2">
         <sequence>

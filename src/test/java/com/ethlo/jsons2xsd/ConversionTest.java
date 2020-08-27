@@ -154,6 +154,19 @@ public class ConversionTest {
     }
 
     @Test
+    public void testConversionNumbers() throws IOException {
+        try (final Reader r = reader("/schema/numbers.json")) {
+            final Config cfg = new Config.Builder()
+                    .createRootElement(true)
+                    .targetNamespace("http://ethlo.com/schema/numbers")
+                    .nsAlias("my")
+                    .name("special")
+                    .build();
+            assertSchema(r, cfg, "schema/numbers.xsd");
+        }
+    }
+
+    @Test
     public void testConversionCMTS() throws IOException {
         try (final Reader r = reader("/schema/account.json")) {
             final Config cfg = new Config.Builder()
