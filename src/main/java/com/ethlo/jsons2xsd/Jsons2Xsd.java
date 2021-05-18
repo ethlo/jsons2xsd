@@ -57,6 +57,7 @@ public class Jsons2Xsd
     private static final String XSD_VALUE = "value";
     private static final String XSD_CHOICE = "choice";
 
+    private static final String XSD_SCHEMA = "schema";
     private static final String XSD_OBJECT = "object";
     private static final String XSD_ARRAY = "array";
 
@@ -193,7 +194,7 @@ public class Jsons2Xsd
         final Document xsdDoc = XmlUtil.newDocument();
         xsdDoc.setXmlStandalone(true);
 
-        final Element schemaRoot = element(xsdDoc, "schema");
+        final Element schemaRoot = element(xsdDoc, XSD_SCHEMA);
         schemaRoot.setAttribute("targetNamespace", cfg.getTargetNamespace());
         schemaRoot.setAttribute("xmlns:" + cfg.getNsAlias(), cfg.getTargetNamespace());
         schemaRoot.setAttribute("elementFormDefault", "qualified");
@@ -362,7 +363,7 @@ public class Jsons2Xsd
                 break;
 
             default:
-                if (nodeElem.getNodeName().equals("schema")) {
+                if (nodeElem.getNodeName().equals(XSD_SCHEMA)) {
                     final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
                     final Element restriction = element(simpleType, XSD_RESTRICTION);
                     restriction.setAttribute("base", xsdType);
@@ -393,7 +394,7 @@ public class Jsons2Xsd
         final Integer maximumLength = getIntVal(val, "maxLength");
         final String expression = val.path("pattern").textValue();
 
-        if (minimumLength != null || maximumLength != null || expression != null || nodeElem.getNodeName().equals("schema"))
+        if (minimumLength != null || maximumLength != null || expression != null || nodeElem.getNodeName().equals(XSD_SCHEMA))
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
@@ -442,7 +443,7 @@ public class Jsons2Xsd
         final Long minimum = getLongVal(jsonNode, "minimum");
         final Long maximum = getLongVal(jsonNode, "maximum");
 
-        if (minimum != null || maximum != null || nodeElem.getNodeName().equals("schema"))
+        if (minimum != null || maximum != null || nodeElem.getNodeName().equals(XSD_SCHEMA))
         {
             nodeElem.removeAttribute("type");
             final Element simpleType = element(nodeElem, XSD_SIMPLETYPE);
@@ -475,7 +476,7 @@ public class Jsons2Xsd
 
     private static void handleArray(Set<String> neededElements, Element nodeElem, JsonNode jsonNode, Config cfg)
     {
-        final JsonNode arrItems = jsonNode.path("items");
+        final JsonNode arrItems = jsonNode.path(FIELD_ITEMS);
         final String arrayXsdType = determineXsdType(cfg, arrItems.path("type").textValue(), arrItems);
         if (cfg.isUnwrapArrays()) {
             handleArrayElements(neededElements, jsonNode, arrItems, arrayXsdType, nodeElem, cfg);
@@ -538,11 +539,11 @@ public class Jsons2Xsd
         {
             return TYPE_ENUM;
         }
-        else if (hasProperties || jsonType.equalsIgnoreCase(JsonComplexType.OBJECT_VALUE))
+        else if (hasProperties || JsonComplexType.OBJECT_VALUE.equalsIgnoreCase(jsonType))
         {
             return XsdComplexType.OBJECT_VALUE;
         }
-        else if (jsonType.equalsIgnoreCase(JsonComplexType.ARRAY_VALUE))
+        else if (JsonComplexType.ARRAY_VALUE.equalsIgnoreCase(jsonType))
         {
             return XsdComplexType.ARRAY_VALUE;
         }
