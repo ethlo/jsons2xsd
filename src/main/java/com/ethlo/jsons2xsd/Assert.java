@@ -4,7 +4,7 @@ package com.ethlo.jsons2xsd;
  * #%L
  * jsons2xsd
  * %%
- * Copyright (C) 2014 - 2020 Morten Haraldsen (ethlo)
+ * Copyright (C) 2014 - 2021 Morten Haraldsen (ethlo)
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
