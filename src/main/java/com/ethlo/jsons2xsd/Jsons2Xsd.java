@@ -297,6 +297,11 @@ public class Jsons2Xsd
             {
                 final Entry<String, JsonNode> entry = fieldIter.next();
                 final String key = entry.getKey();
+                if ("$id".equals(key))
+                {
+                    // can't use the information provided by a JSON $id in an XSD
+                    continue;
+                }
                 final JsonNode val = entry.getValue();
                 doIterateSingle(neededElements, key, val, elem, requiredList.contains(key), cfg);
             }
@@ -527,6 +532,7 @@ public class Jsons2Xsd
     private static String determineXsdType(final Config cfg, String key, JsonNode node)
     {
         final String jsonType = node.path("type").textValue();
+
         final String jsonFormat = node.path("format").textValue();
         final boolean isEnum = node.get(TYPE_ENUM) != null;
         final boolean isRef = node.get(JSON_REF) != null;
@@ -547,7 +553,6 @@ public class Jsons2Xsd
         {
             return XsdComplexType.ARRAY_VALUE;
         }
-
         Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
 
         // Check built-in
