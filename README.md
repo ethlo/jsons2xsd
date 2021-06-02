@@ -14,7 +14,7 @@ jsons2xsd
 <dependency>
   <groupId>com.ethlo.jsons2xsd</groupId>
   <artifactId>jsons2xsd</artifactId>
-  <version>2.2.0</version>
+  <version>2.3.1-SNAPSHOT</version>
 </dependency>
 ```
 ## Snapshots
