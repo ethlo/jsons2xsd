@@ -4,7 +4,7 @@ package com.ethlo.jsons2xsd;
  * #%L
  * jsons2xsd
  * %%
- * Copyright (C) 2014 - 2020 Morten Haraldsen (ethlo)
+ * Copyright (C) 2014 - 2021 Morten Haraldsen (ethlo)
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,14 @@ package com.ethlo.jsons2xsd;
  * #L%
  */
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -33,28 +41,13 @@ import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import com.sun.xml.xsom.parser.XSOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import com.sun.xml.xsom.parser.XSOMParser;
 
 public class XmlUtil
 {
