@@ -104,8 +104,8 @@ try (final Reader r = reader("/schema/arrayschema.json")) {
 #### customFormats <sup>[source](src/test/java/samples/formats/FormatSamples.java#L45-L67)</sup>
 
 Map a `format` of a JSON type to an XSD type. In this schema `foo` has the format `bar`, which has no mapping.
-With `ignoreUnknownFormats` it gets the XSD type of a mapping registered for the same JSON type, here the
-`string` one. Without a mapping for its JSON type, an unknown format is an error even with this option.
+An unknown format is an error, but with `ignoreUnknownFormats` the property gets the type it would have without
+a format, here `string`.
 
 ```java
 try (final Reader r = reader("/schema/customformats.json")) {
