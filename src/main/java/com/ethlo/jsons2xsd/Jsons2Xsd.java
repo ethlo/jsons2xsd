@@ -549,29 +549,16 @@ public class Jsons2Xsd
 
         Assert.notNull(jsonType, "type must be specified on node '" + key + "': " + node);
 
-        // Check built-in
-        String xsdType = getType(jsonType, jsonFormat);
+        String xsdType = resolveXsdType(cfg, jsonType, jsonFormat);
+        if (xsdType == null && jsonFormat != null && cfg.isIgnoreUnknownFormats())
+        {
+            // Unknown format: use the type as if no format was given
+            xsdType = resolveXsdType(cfg, jsonType, null);
+        }
+
         if (xsdType != null)
         {
             return xsdType;
-        }
-
-        // Check cusom mapping in config
-        xsdType = cfg.getType(jsonType, jsonFormat);
-        if (xsdType != null)
-        {
-            return xsdType;
-        }
-
-        // Check for non-json mappings
-        final Optional<Entry<String, String>> mapping = cfg.getTypeMapping()
-                .entrySet()
-                .stream()
-                .filter(e->e.getKey().startsWith(jsonType + "|"))
-                .findFirst();
-        if (mapping.isPresent() && (isFormatMatch(mapping.get().getKey(), jsonType, jsonFormat) || cfg.isIgnoreUnknownFormats()))
-        {
-            return mapping.get().getValue();
         }
 
         throw new IllegalArgumentException("Unable to determine XSD type for json type=" + jsonType + ", format=" + jsonFormat);
@@ -585,6 +572,32 @@ public class Jsons2Xsd
             final Element documentation = element(annotation, "documentation");
             documentation.setTextContent(description.textValue());
         }
+    }
+
+    private static String resolveXsdType(final Config cfg, final String jsonType, final String jsonFormat)
+    {
+        // Check built-in
+        final String builtIn = getType(jsonType, jsonFormat);
+        if (builtIn != null)
+        {
+            return builtIn;
+        }
+
+        // Check custom mapping in config
+        final String custom = cfg.getType(jsonType, jsonFormat);
+        if (custom != null)
+        {
+            return custom;
+        }
+
+        // Check for non-json mappings, stored with a "null" format when none was given
+        return cfg.getTypeMapping()
+                .entrySet()
+                .stream()
+                .filter(e -> isFormatMatch(e.getKey(), jsonType, jsonFormat))
+                .map(Entry::getValue)
+                .findFirst()
+                .orElse(null);
     }
 
     private static boolean isFormatMatch(final String key, final String jsonType, final String jsonFormat)
