@@ -2,17 +2,26 @@ name: Build
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 8, 17, 21 ]
+    name: Java ${{ matrix.java }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: '8'
+          java-version: ${{ matrix.java }}
           cache: maven
       - name: Build with Maven
-        run: mvn -B verify -Dgpg.skip
+        run: mvn -B -ntp verify -Dgpg.skip
