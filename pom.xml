@@ -158,7 +158,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<keyname>B460E7C4ED66826D</keyname>
 					<executable>gpg</executable>
 				</configuration>
 			</plugin>
