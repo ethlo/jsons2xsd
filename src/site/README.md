@@ -12,7 +12,7 @@ jsons2xsd
 <dependency>
   <groupId>com.ethlo.jsons2xsd</groupId>
   <artifactId>jsons2xsd</artifactId>
-  <version>2.3.0</version>
+  <version>${released.version}</version>
 </dependency>
 ```
 ## Usage
