@@ -60,7 +60,7 @@ jobs:
         run: mvn -ntp -B -Prelease clean deploy
 
   update-readme:
-    name: Update README and version on the default branch
+    name: Update README to the released version
     needs: publish
     runs-on: ubuntu-26.04
     permissions:
@@ -101,20 +101,6 @@ jobs:
           sed -i "s#<released.version>[^<]*</released.version>#<released.version>$VERSION</released.version>#" pom.xml
           mvn -ntp -B -Preadme process-resources
 
-      - name: Set the next development version
-        if: steps.decide.outputs.update == 'true'
-        env:
-          VERSION: ${{ steps.decide.outputs.version }}
-        run: |
-          CURRENT=$(mvn -ntp -B -q -N help:evaluate -Dexpression=project.version -DforceStdout)
-          NEXT="${VERSION%.*}.$(( ${VERSION##*.} + 1 ))-SNAPSHOT"
-          if [[ "$(printf '%s\n%s\n' "${CURRENT%-SNAPSHOT}" "$VERSION" | sort -V | tail -1)" == "$VERSION" ]]; then
-            echo "Setting version $CURRENT -> $NEXT"
-            mvn -ntp -B versions:set -DnewVersion="$NEXT" -DgenerateBackupPoms=false
-          else
-            echo "Version $CURRENT is already ahead of $VERSION, leaving it"
-          fi
-
       - name: Commit and push
         if: steps.decide.outputs.update == 'true'
         env:
@@ -122,10 +108,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898898+github-actions[bot]@users.noreply.github.com"
-          git add README.md $(git ls-files -m '*pom.xml')
+          git add pom.xml README.md
           if git diff --cached --quiet; then
-            echo "README and version already up to date"
+            echo "README already shows $VERSION"
             exit 0
           fi
-          git commit -m "Update README to $VERSION and set the next development version"
+          git commit -m "Update README to $VERSION"
           git push origin HEAD:${{ github.event.repository.default_branch }}
