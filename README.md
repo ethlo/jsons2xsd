@@ -7,6 +7,8 @@ jsons2xsd
 
 [JSON-schema](http://json-schema.org/) to [XML schema](https://www.w3.org/TR/xmlschema11-1/) converter written in Java.
 
+Reusable types can be in `definitions` or `$defs` (JSON Schema 2019-09 and later), and are referenced with local `$ref`s like `#/$defs/Address`.
+
 ## Dependency
 ```xml
 <dependency>

@@ -29,6 +29,7 @@ package com.ethlo.jsons2xsd;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,6 +63,7 @@ public class Jsons2Xsd
 
     private static final String JSON_REF = "$ref";
     private static final String JSON_DEFINITIONS = "definitions";
+    private static final String JSON_DEFS = "$defs";
 
     private static final Map<String, String> typeMapping = new HashMap<>();
 
@@ -122,16 +124,7 @@ public class Jsons2Xsd
                 throw new IllegalArgumentException("Unknown root type: " + type);
         }
 
-        JsonNode definitions;
-        if (definitionSchema != null)
-        {
-            final JsonNode definitionsRootNode = mapper.readTree(definitionSchema);
-            definitions = definitionsRootNode.path(JSON_DEFINITIONS);
-        }
-        else
-        {
-            definitions = rootNode.path(JSON_DEFINITIONS);
-        }
+        final JsonNode definitions = getDefinitions(definitionSchema != null ? mapper.readTree(definitionSchema) : rootNode);
 
         doIterateDefinitions(neededElements, schemaRoot, definitions, cfg);
 
@@ -277,9 +270,8 @@ public class Jsons2Xsd
         for (JsonNode e : oneOf)
         {
             final Element nodeElem = element(choiceElem, XSD_ELEMENT);
-            final JsonNode refs = e.get(JSON_REF);
-            String fixRef = refs.asText().replace("#/definitions/", cfg.getNsAlias() + ":");
-            String name = fixRef.substring(cfg.getNsAlias().length() + 1);
+            final String name = getReferencedName(e);
+            final String fixRef = cfg.getNsAlias() + ":" + name;
             nodeElem.setAttribute(FIELD_NAME, name);
             nodeElem.setAttribute("type", fixRef);
 
@@ -370,12 +362,56 @@ public class Jsons2Xsd
         }
     }
 
+    /**
+     * The definitions of a schema, from both "definitions" (draft 7 and earlier) and "$defs" (2019-09 and later)
+     */
+    private static JsonNode getDefinitions(final JsonNode schema)
+    {
+        final ObjectNode definitions = mapper.createObjectNode();
+        for (final String section : new String[]{JSON_DEFINITIONS, JSON_DEFS})
+        {
+            final Iterator<Entry<String, JsonNode>> iter = schema.path(section).fields();
+            while (iter.hasNext())
+            {
+                final Entry<String, JsonNode> entry = iter.next();
+                if (definitions.has(entry.getKey()))
+                {
+                    throw new IllegalArgumentException("Definition '" + entry.getKey() + "' exists in both '" + JSON_DEFINITIONS + "' and '" + JSON_DEFS + "'");
+                }
+                definitions.set(entry.getKey(), entry.getValue());
+            }
+        }
+        return definitions;
+    }
+
+    /**
+     * The definition name in a local $ref, like "#/definitions/Foo" or "#/$defs/Foo"
+     */
+    private static String getReferencedName(final JsonNode node)
+    {
+        final JsonNode refNode = node.get(JSON_REF);
+        if (refNode == null)
+        {
+            throw new IllegalArgumentException("Expected a " + JSON_REF + " in " + node);
+        }
+
+        final String ref = refNode.asText();
+        for (final String section : new String[]{JSON_DEFINITIONS, JSON_DEFS})
+        {
+            final String prefix = "#/" + section + "/";
+            if (ref.startsWith(prefix) && ref.length() > prefix.length())
+            {
+                return ref.substring(prefix.length());
+            }
+        }
+        throw new IllegalArgumentException("Unsupported " + JSON_REF + " '" + ref + "': only references to '#/" + JSON_DEFINITIONS + "/' or '#/" + JSON_DEFS + "/' are supported");
+    }
+
     private static void handleReference(Set<String> neededElements, Element nodeElem, JsonNode val, Config cfg)
     {
-        final JsonNode refs = val.get(JSON_REF);
         nodeElem.removeAttribute("type");
-        String fixRef = refs.asText().replace("#/definitions/", cfg.getNsAlias() + ":");
-        String name = fixRef.substring(cfg.getNsAlias().length() + 1);
+        final String name = getReferencedName(val);
+        final String fixRef = cfg.getNsAlias() + ":" + name;
         String oldName = nodeElem.getAttribute(FIELD_NAME);
 
         if (oldName.trim().length() == 0)
