@@ -4,6 +4,8 @@
 	<groupId>com.ethlo.jsons2xsd</groupId>
 	<artifactId>jsons2xsd</artifactId>
 	<version>0-SNAPSHOT</version>
+	<name>jsons2xsd</name>
+	<description>Highly configurable converter from JSON-schema to XML-schema (XSD).</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
