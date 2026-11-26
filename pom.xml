@@ -207,7 +207,7 @@
 	</dependencies>
 	<properties>
 		<!-- The version shown in README.md. The release workflow updates it. -->
-		<released.version>2.3.0</released.version>
+		<released.version>2.4.0</released.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gpg.skip>true</gpg.skip>
 	</properties>

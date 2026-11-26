@@ -14,7 +14,7 @@ Reusable types can be in `definitions` or `$defs` (JSON Schema 2019-09 and later
 <dependency>
   <groupId>com.ethlo.jsons2xsd</groupId>
   <artifactId>jsons2xsd</artifactId>
-  <version>2.3.0</version>
+  <version>2.4.0</version>
 </dependency>
 ```
 ## Usage
